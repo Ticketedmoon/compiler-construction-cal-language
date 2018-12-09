@@ -11,8 +11,8 @@ public class PrintVisitor implements AssignmentTwoVisitor
     }
 
     public Object visit(ASTprogram node, Object data) {
-		for(int i = 0; i < node.jjtGetNumChildren(); i++)
-    		node.jjtGetChild(i).jjtAccept(this, data);
+		node.jjtGetChild(0).jjtAccept(this, data);
+		node.jjtGetChild(1).jjtAccept(this, data);
 		return data;
     }
     
@@ -55,16 +55,12 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		}
 
 		System.out.println(") is");
-
-		for (int i = 0; i < node.jjtGetChild(3).jjtGetNumChildren(); i++) {
-			System.out.print("    ");
-			node.jjtGetChild(3).jjtGetChild(i).jjtAccept(this, data);
-		}
+		System.out.print("    ");
+		node.jjtGetChild(3).jjtAccept(this, data);
 
 		System.out.println("    begin");
-		for(int i = 4; i < node.jjtGetNumChildren(); i++) {
+		for(int i = 4; i < node.jjtGetNumChildren(); i++)
         	node.jjtGetChild(i).jjtAccept(this, data);
-		}
 		System.out.println("\n    end");
         return data;
     }
@@ -106,9 +102,7 @@ public class PrintVisitor implements AssignmentTwoVisitor
     }
 
     public Object visit(ASTFunction_call_statement node, Object data) {		
-		System.out.print("(");
-		node.jjtGetChild(0).jjtAccept(this, data);
-		System.out.print(")");
+		System.out.print(node.value + " ");
 		return data;
     }
 
@@ -137,8 +131,8 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		return data;
     }
 
-    public Object visit(ASTArg_list node, Object data) {
-		System.out.print(node.value);
+    public Object visit(ASTNemp_parameter_list node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this, data);
 		return data;
     }
 
@@ -217,19 +211,6 @@ public class PrintVisitor implements AssignmentTwoVisitor
 	}
 
     public Object visit(ASTMain node, Object data) {
-		System.out.println();
-		System.out.println("main");
-		System.out.println("    begin");
-
-		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
-			if (node.jjtGetChild(i) instanceof ASTDec_list) {
-				System.out.print("        ");
-    			node.jjtGetChild(i).jjtAccept(this, data);	
-			}
-			else
-    			node.jjtGetChild(i).jjtAccept(this, data);
-		}
-		System.out.println("    end");
 		return data;
     }
 }

@@ -29,6 +29,10 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 		return(node.jjtGetChild(0).jjtAccept(this, data));
     }
 
+    public Object visit(ASTArg_list node, Object data) {
+		return(node.jjtGetChild(0).jjtAccept(this, data));
+    }
+
     public Object visit(ASTDecl node, Object data) {
 		return DataType.Declaration;
     }
@@ -70,7 +74,7 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 			System.out.println();
 	    }
 
-		return (node.jjtGetChild(1).jjtAccept(this, data));
+		return (node.jjtGetChild(0).jjtAccept(this, data));
     }
 
     public Object visit(ASTDec_list node, Object data) {

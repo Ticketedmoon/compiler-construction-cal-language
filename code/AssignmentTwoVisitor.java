@@ -17,6 +17,7 @@ public interface AssignmentTwoVisitor
   public Object visit(ASTMinus_sign node, Object data);
   public Object visit(ASTBinary_arith_op node, Object data);
   public Object visit(ASTExp node, Object data);
+  public Object visit(ASTArg_list node, Object data);
   public Object visit(ASTAssignment_exp node, Object data);
   public Object visit(ASTFunction_call_statement node, Object data);
   public Object visit(ASTnumber node, Object data);
@@ -26,4 +27,4 @@ public interface AssignmentTwoVisitor
   public Object visit(ASTtypeBoolean node, Object data);
   public Object visit(ASTMain node, Object data);
 }
-/* JavaCC - OriginalChecksum=f712bb3d7dc9cb5e5653918886b4fff5 (do not edit this line) */
+/* JavaCC - OriginalChecksum=4bfb4d09e6602c54329908647c6ae427 (do not edit this line) */

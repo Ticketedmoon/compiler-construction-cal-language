@@ -236,17 +236,17 @@ void function_return() #void:
 
 // Defines parameter list.
 // Either is a non-empty parameter list or an empty one (0 or 1)
-void parameter_list() #void:
+void parameter_list() #Parameter_list:
 {}
 {
-	[nemp_parameter_list() #Parameter_list(2)]
+	[nemp_parameter_list()]
 }
 
 // Non-empty parameter list structure.
-void nemp_parameter_list() #void:
+void nemp_parameter_list() #Nemp_parameter_list(2):
 {}
 {
-	identifier() <COLON> anyType() [<COMMA> nemp_parameter_list() #Nemp_parameter_list(2)]
+	identifier() <COLON> anyType() [<COMMA> nemp_parameter_list()]
 }
 
 // A statement block is simply 0 or more statements.
@@ -358,7 +358,7 @@ void simple_special_expression() #void:
 }
 
 // Argument list is 0 or 1 non-empty argument lists.
-void arg_list() #void:
+void arg_list() #Arg_list:
 {}
 {
     [nemp_arg_list()]
@@ -372,15 +372,15 @@ void nemp_arg_list() #void:
 }
 
 void assignmentExpression() #Assignment_exp:
-{Token t;}
+{}
 {
-  t = <ASSIGNMENT> expression() <SEMICOLON>
+  <ASSIGNMENT> expression() <SEMICOLON>
 }
 
 void functionCallStatement() #Function_call_statement:
-{Token t;}
+{}
 {
-  t = <LBRACE> arg_list() <RBRACE> <SEMICOLON>
+  <LBRACE> arg_list() <RBRACE> <SEMICOLON>
 }
 
 // List of our comparison operator tokens.

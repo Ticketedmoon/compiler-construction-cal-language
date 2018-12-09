@@ -17,14 +17,15 @@ public interface AssignmentTwoTreeConstants
   public int JJTMINUS_SIGN = 13;
   public int JJTBINARY_ARITH_OP = 14;
   public int JJTEXP = 15;
-  public int JJTASSIGNMENT_EXP = 16;
-  public int JJTFUNCTION_CALL_STATEMENT = 17;
-  public int JJTNUMBER = 18;
-  public int JJTIDENTIFIER = 19;
-  public int JJTANYTYPE = 20;
-  public int JJTTYPEINTEGER = 21;
-  public int JJTTYPEBOOLEAN = 22;
-  public int JJTMAIN = 23;
+  public int JJTARG_LIST = 16;
+  public int JJTASSIGNMENT_EXP = 17;
+  public int JJTFUNCTION_CALL_STATEMENT = 18;
+  public int JJTNUMBER = 19;
+  public int JJTIDENTIFIER = 20;
+  public int JJTANYTYPE = 21;
+  public int JJTTYPEINTEGER = 22;
+  public int JJTTYPEBOOLEAN = 23;
+  public int JJTMAIN = 24;
 
 
   public String[] jjtNodeName = {
@@ -44,6 +45,7 @@ public interface AssignmentTwoTreeConstants
     "Minus_sign",
     "Binary_arith_op",
     "Exp",
+    "Arg_list",
     "Assignment_exp",
     "Function_call_statement",
     "number",
@@ -54,4 +56,4 @@ public interface AssignmentTwoTreeConstants
     "Main",
   };
 }
-/* JavaCC - OriginalChecksum=2c31dd49ca542f473b8b751b46ab221f (do not edit this line) */
+/* JavaCC - OriginalChecksum=f9b90c673c1304fad02591806f056ab7 (do not edit this line) */
