@@ -1,0 +1,27 @@
+variable p : integer;
+constant y : integer := 5;
+variable isOn : boolean;
+variable isOff : boolean;
+variable switch : boolean;
+
+integer hello() is
+	variable i : integer;
+	variable j : boolean;
+	begin
+		i := 1 + 3;
+		x := 5 * 15;
+		return ();
+	end
+
+// Getter method
+integer getIsOff() is
+	variable n : integer;
+	begin
+		return (isOff);
+	end 
+
+main
+	begin
+		variable z : integer;
+		x := getIsOff();
+	end

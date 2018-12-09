@@ -1,0 +1,79 @@
+void multiply (x : integer, y: integer) is
+
+	variable while__x : integer;
+	variable result : integer;
+	variable minus_sign : boolean;
+	// variable a_1 : integer;
+
+begIN
+	// figure out sign of result and covert args to absolute values
+	if (~(x < 0 & ~(y >= 0 | x <= x)))
+	begin
+		minus_sign := true;
+		x := -x;
+	eND
+	elSe
+	beGin
+		IF (x = 5)
+		begin
+			minus_sign := true;
+			y := -y;
+		end
+		else
+		begin
+			if (x < 0) & y < 0
+			begin
+				minus_sign := false;
+				x := -x;
+				y := -y;
+			end			
+			else
+			begin
+				minus_sign := false;
+			end
+		end
+	end
+
+	result := 0;
+
+	whILe (y > 0 & (l = 0 | ~(k > 5)))
+	begin
+		result := result + x;
+		y := y - 1;
+	end
+	if ~(true = 5)
+	begin
+		result := -result;
+	end
+	else
+	begin
+		skip;
+	end
+	retURn ();
+end
+
+mAIN
+begin
+	variable arg_1: integer;
+	variable arg_2: integer;
+	variable result: integer;
+
+	constant five: integer := 170150002569;
+	constant five: integer := 5000;
+	constant five: integer := 0;
+	constant five: integer := 10000;
+
+	constant five: integer := 10050505;
+	constant five: integer := 10500522220;
+	constant five: integer := 123423432401;
+	constant five: integer := 10;
+
+	arg_1 := -6;
+	arg_2 := (five);
+	arg_1 := -5;
+
+	result := working(arg_1, arg_2);
+	x := multi(a_, b_____);
+end
+
+/* test end */
