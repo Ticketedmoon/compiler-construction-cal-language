@@ -756,54 +756,7 @@ void simple_expression()     :
 // A condition firstly can be instantiated with either a not token (~ tilde) or not.
 // Following is a simple condition with 0 or 1 logical operators followed by a condition.
 // Structure is very similar to expression() above but with the NOT token.
-void condition()      :
-{Token t;}
-{   
-    [/*@bgen(jjtree) Not_op */
-     {
-       ASTNot_op jjtn001 = new ASTNot_op(JJTNOT_OP);
-       boolean jjtc001 = true;
-       jjtree.openNodeScope(jjtn001);
-     }
-     try {
-/*@egen*/<NOT>/*@bgen(jjtree)*/
-     } finally {
-       if (jjtc001) {
-         jjtree.closeNodeScope(jjtn001, true);
-       }
-     }
-/*@egen*/        ] simple_condition() 
-	[
-		((t = <AND> | t = <OR>) condition()/*@bgen(jjtree) Binary_logical_op */
-  {
-    ASTBinary_logical_op jjtn002 = new ASTBinary_logical_op(JJTBINARY_LOGICAL_OP);
-    boolean jjtc002 = true;
-    jjtree.openNodeScope(jjtn002);
-  }
-  try {
-/*@egen*//*@bgen(jjtree)*/
-  {
-    jjtree.closeNodeScope(jjtn002, true);
-    jjtc002 = false;
-  }
-/*@egen*/
-		{jjtn002.value = t.image;}/*@bgen(jjtree)*/
-  } finally {
-    if (jjtc002) {
-      jjtree.closeNodeScope(jjtn002, true);
-    }
-  }
-/*@egen*/                   )
-	]
-}
-
-/* A simple condition takes a left bracket, condition, right bracket or
- * It takes a special_expression followed by 0 or 1 comparison operators and another
- * expression.
- * The special_expression is necessary for allowing the parser to have no difficulty,
- * when deciding what choice to make in our parser.
-*/
-void simple_condition()           :
+void condition()           :
 {/*@bgen(jjtree) Condition */
  ASTCondition jjtn000 = new ASTCondition(JJTCONDITION);
  boolean jjtc000 = true;
@@ -812,6 +765,88 @@ void simple_condition()           :
 {/*@bgen(jjtree) Condition */
     try {
 /*@egen*/   
+    ((<NOT>/*@bgen(jjtree) #Not_op( 1) */
+            {
+              ASTNot_op jjtn001 = new ASTNot_op(JJTNOT_OP);
+              boolean jjtc001 = true;
+              jjtree.openNodeScope(jjtn001);
+            }
+            try {
+/*@egen*/ simple_condition()/*@bgen(jjtree)*/
+            } catch (Throwable jjte001) {
+              if (jjtc001) {
+                jjtree.clearNodeScope(jjtn001);
+                jjtc001 = false;
+              } else {
+                jjtree.popNode();
+              }
+              if (jjte001 instanceof RuntimeException) {
+                throw (RuntimeException)jjte001;
+              }
+              if (jjte001 instanceof ParseException) {
+                throw (ParseException)jjte001;
+              }
+              throw (Error)jjte001;
+            } finally {
+              if (jjtc001) {
+                jjtree.closeNodeScope(jjtn001,  1);
+              }
+            }
+/*@egen*/           )
+	| simple_condition())
+	[
+		((t = <AND> | t = <OR>) condition()/*@bgen(jjtree) #Binary_logical_op( 2) */
+  {
+    ASTBinary_logical_op jjtn002 = new ASTBinary_logical_op(JJTBINARY_LOGICAL_OP);
+    boolean jjtc002 = true;
+    jjtree.openNodeScope(jjtn002);
+  }
+  try {
+/*@egen*//*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn002,  2);
+    jjtc002 = false;
+  }
+/*@egen*/
+		{jjtn002.value = t.image;}/*@bgen(jjtree)*/
+  } finally {
+    if (jjtc002) {
+      jjtree.closeNodeScope(jjtn002,  2);
+    }
+  }
+/*@egen*/                      )
+	]/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
+}
+
+/* A simple condition takes a left bracket, condition, right bracket or
+ * It takes a special_expression followed by 0 or 1 comparison operators and another
+ * expression.
+ * The special_expression is necessary for allowing the parser to have no difficulty,
+ * when deciding what choice to make in our parser.
+*/
+void simple_condition()      :
+{Token t;}
+{   
     <LBRACE> condition() <RBRACE>
     | special_expression() ((t = <EQUALS> 
 	| t = <NOT_EQUALS> | t = <LESS_THAN> 
@@ -835,27 +870,7 @@ void simple_condition()           :
      jjtree.closeNodeScope(jjtn001,  2);
    }
  }
-/*@egen*/                  )/*@bgen(jjtree)*/
-    } catch (Throwable jjte000) {
-      if (jjtc000) {
-        jjtree.clearNodeScope(jjtn000);
-        jjtc000 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte000 instanceof RuntimeException) {
-        throw (RuntimeException)jjte000;
-      }
-      if (jjte000 instanceof ParseException) {
-        throw (ParseException)jjte000;
-      }
-      throw (Error)jjte000;
-    } finally {
-      if (jjtc000) {
-        jjtree.closeNodeScope(jjtn000, true);
-      }
-    }
-/*@egen*/
+/*@egen*/                  )
 }
 
 // Special Expression structure - similar to expression / condition.

@@ -166,6 +166,7 @@ public class PrintVisitor implements AssignmentTwoVisitor
     }
 
     public Object visit(ASTNot_op node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this, data);
 		System.out.print("~");
 		return data;
     }
@@ -190,7 +191,9 @@ public class PrintVisitor implements AssignmentTwoVisitor
     }
 
     public Object visit(ASTCondition node, Object data) {
+		System.out.print("(");
 		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print(")");
 		System.out.println();
 		return(data);
     }

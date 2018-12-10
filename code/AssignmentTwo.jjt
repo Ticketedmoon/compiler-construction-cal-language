@@ -320,13 +320,14 @@ void simple_expression() #Exp:
 // A condition firstly can be instantiated with either a not token (~ tilde) or not.
 // Following is a simple condition with 0 or 1 logical operators followed by a condition.
 // Structure is very similar to expression() above but with the NOT token.
-void condition() #void:
+void condition() #Condition:
 {Token t;}
 {   
-    [<NOT> #Not_op] simple_condition() 
+    ((<NOT> simple_condition() #Not_op(1))
+	| simple_condition())
 	[
 		((t = <AND> | t = <OR>) condition()
-		{jjtThis.value = t.image;} #Binary_logical_op)
+		{jjtThis.value = t.image;} #Binary_logical_op(2))
 	]
 }
 
@@ -336,7 +337,7 @@ void condition() #void:
  * The special_expression is necessary for allowing the parser to have no difficulty,
  * when deciding what choice to make in our parser.
 */
-void simple_condition() #Condition:
+void simple_condition() #void:
 {Token t;}
 {   
     <LBRACE> condition() <RBRACE>

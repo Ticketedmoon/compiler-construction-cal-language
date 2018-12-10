@@ -7,7 +7,7 @@ void multiply (x : integer, y: integer) is
 
 begIN
 	// figure out sign of result and covert args to absolute values
-	if (~(x < 0 & ~(y >= 0 | x <= x)))
+	if ~(x < 0 & ~(y >= 0 | x <= x))
 	begin
 		minus_sign := true;
 		x := -x;

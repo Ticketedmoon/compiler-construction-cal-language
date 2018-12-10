@@ -17,9 +17,9 @@ public interface AssignmentTwoTreeConstants
   public int JJTMINUS_SIGN = 13;
   public int JJTBINARY_ARITH_OP = 14;
   public int JJTEXP = 15;
-  public int JJTNOT_OP = 16;
-  public int JJTBINARY_LOGICAL_OP = 17;
-  public int JJTCONDITION = 18;
+  public int JJTCONDITION = 16;
+  public int JJTNOT_OP = 17;
+  public int JJTBINARY_LOGICAL_OP = 18;
   public int JJTCOMPARISON_OP = 19;
   public int JJTARG_LIST = 20;
   public int JJTNEMP_ARG_LIST = 21;
@@ -50,9 +50,9 @@ public interface AssignmentTwoTreeConstants
     "Minus_sign",
     "Binary_arith_op",
     "Exp",
+    "Condition",
     "Not_op",
     "Binary_logical_op",
-    "Condition",
     "Comparison_op",
     "Arg_list",
     "Nemp_arg_list",
@@ -66,4 +66,4 @@ public interface AssignmentTwoTreeConstants
     "Main",
   };
 }
-/* JavaCC - OriginalChecksum=66d296c407671c26ddeed81a4142669f (do not edit this line) */
+/* JavaCC - OriginalChecksum=92cc14475aa9d9e5d56285b1b4f80040 (do not edit this line) */
