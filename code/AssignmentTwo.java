@@ -278,7 +278,7 @@ if (jjtc002) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case INTEGER:{
       typeInteger();
-      assignmentExpression();
+      assignment_structure();
 ASTConst_decl jjtn001 = new ASTConst_decl(JJTCONST_DECL);
     boolean jjtc001 = true;
     jjtree.openNodeScope(jjtn001);
@@ -295,7 +295,7 @@ if (jjtc001) {
       }
     case BOOLEAN:{
       typeBoolean();
-      assignmentExpression();
+      assignment_structure();
 ASTConst_decl jjtn002 = new ASTConst_decl(JJTCONST_DECL);
     boolean jjtc002 = true;
     jjtree.openNodeScope(jjtn002);
@@ -577,20 +577,20 @@ if (jjtc001) {
 // Statement structure - has many possible routes.
 // Skip token is used to skip the expection of anything else inside statement.
   final public void statement() throws ParseException {/*@bgen(jjtree) Statement */
-  ASTStatement jjtn000 = new ASTStatement(JJTSTATEMENT);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+ ASTStatement jjtn000 = new ASTStatement(JJTSTATEMENT);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);Token t;
     try {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case ID:{
         identifier();
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case ASSIGNMENT:{
-          assignmentExpression();
+          assignment_structure();
           break;
           }
         case LBRACE:{
-          functionCallStatement();
+          function_call_structure();
           break;
           }
         default:
@@ -601,32 +601,33 @@ if (jjtc001) {
         break;
         }
       case BEGIN:{
-        jj_consume_token(BEGIN);
-        statement_block();
-        jj_consume_token(END);
+        statement_begin_structure();
         break;
         }
       case IF:{
-        jj_consume_token(IF);
+        t = jj_consume_token(IF);
         condition();
-        jj_consume_token(BEGIN);
-        statement_block();
-        jj_consume_token(END);
+        statement_begin_structure();
+jjtree.closeNodeScope(jjtn000, true);
+     jjtc000 = false;
+jjtn000.value = t.image;
         break;
         }
       case ELSE:{
-        jj_consume_token(ELSE);
-        jj_consume_token(BEGIN);
-        statement_block();
-        jj_consume_token(END);
+        t = jj_consume_token(ELSE);
+        statement_begin_structure();
+jjtree.closeNodeScope(jjtn000, true);
+     jjtc000 = false;
+jjtn000.value = t.image;
         break;
         }
       case WHILE:{
-        jj_consume_token(WHILE);
+        t = jj_consume_token(WHILE);
         condition();
-        jj_consume_token(BEGIN);
-        statement_block();
-        jj_consume_token(END);
+        statement_begin_structure();
+jjtree.closeNodeScope(jjtn000, true);
+     jjtc000 = false;
+jjtn000.value = t.image;
         break;
         }
       case SKIP_TOKEN:{
@@ -1192,8 +1193,9 @@ if (jjtc000) {
     }
 }
 
-  final public void assignmentExpression() throws ParseException {/*@bgen(jjtree) Assignment_exp */
-  ASTAssignment_exp jjtn000 = new ASTAssignment_exp(JJTASSIGNMENT_EXP);
+// Structure to assignments 
+  final public void assignment_structure() throws ParseException {/*@bgen(jjtree) Assignment_structure */
+  ASTAssignment_structure jjtn000 = new ASTAssignment_structure(JJTASSIGNMENT_STRUCTURE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
@@ -1221,8 +1223,9 @@ if (jjtc000) {
     }
 }
 
-  final public void functionCallStatement() throws ParseException {/*@bgen(jjtree) Function_call_statement */
-  ASTFunction_call_statement jjtn000 = new ASTFunction_call_statement(JJTFUNCTION_CALL_STATEMENT);
+// Structure to function calls
+  final public void function_call_structure() throws ParseException {/*@bgen(jjtree) Function_call_structure */
+  ASTFunction_call_structure jjtn000 = new ASTFunction_call_structure(JJTFUNCTION_CALL_STRUCTURE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
@@ -1248,6 +1251,36 @@ if (jjtc000) {
 if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
     }
+    }
+}
+
+// Structure to statements
+  final public void statement_begin_structure() throws ParseException {/*@bgen(jjtree) Statement_begin_structure */
+  ASTStatement_begin_structure jjtn000 = new ASTStatement_begin_structure(JJTSTATEMENT_BEGIN_STRUCTURE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+    try {
+      jj_consume_token(BEGIN);
+      statement_block();
+      jj_consume_token(END);
+    } catch (Throwable jjte000) {
+if (jjtc000) {
+     jjtree.clearNodeScope(jjtn000);
+     jjtc000 = false;
+   } else {
+     jjtree.popNode();
+   }
+   if (jjte000 instanceof RuntimeException) {
+     {if (true) throw (RuntimeException)jjte000;}
+   }
+   if (jjte000 instanceof ParseException) {
+     {if (true) throw (ParseException)jjte000;}
+   }
+   {if (true) throw (Error)jjte000;}
+    } finally {
+if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+   }
     }
 }
 

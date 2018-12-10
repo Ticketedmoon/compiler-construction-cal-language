@@ -196,10 +196,10 @@ void const_decl() #void:
 {
 	<CONSTANT> name = identifier() <COLON> 
 	(
-		typeInteger() assignmentExpression()
+		typeInteger() assignment_structure()
 		{ST.put(name, new STC("Integer", name));} #Const_decl(3)
     |
-		typeBoolean() assignmentExpression()
+		typeBoolean() assignment_structure()
 		{ST.put(name, new STC("Boolean", name));} #Const_decl(3)
 	)
 }
@@ -260,24 +260,16 @@ void statement_block() #void:
 // Statement structure - has many possible routes.
 // Skip token is used to skip the expection of anything else inside statement.
 void statement() #Statement:
-{}
+{Token t;}
 {
-	identifier() (assignmentExpression() | functionCallStatement())
-	| <BEGIN>
-	      statement_block() 
-	  <END>
-	| <IF> condition()
-	      <BEGIN>
-	          statement_block()
-	      <END>
-	| <ELSE>
-	      <BEGIN>
-		      statement_block()
-		  <END>
-	| <WHILE> condition()
-		  <BEGIN>
-		      statement_block()
-		  <END>
+	identifier() (assignment_structure() | function_call_structure())
+	| statement_begin_structure()
+	| (t = <IF> condition()) statement_begin_structure()
+	  {jjtThis.value = t.image;}
+	| (t = <ELSE>) statement_begin_structure()
+	  {jjtThis.value = t.image;}
+	| (t = <WHILE> condition()) statement_begin_structure()
+	  {jjtThis.value = t.image;}
 	| <SKIP_TOKEN> <SEMICOLON>
 }
 
@@ -381,16 +373,27 @@ void nemp_arg_list() #void:
     identifier() [<COMMA> nemp_arg_list()]
 }
 
-void assignmentExpression() #Assignment_exp:
+// Structure to assignments 
+void assignment_structure() #Assignment_structure:
 {}
 {
   <ASSIGNMENT> expression() <SEMICOLON>
 }
 
-void functionCallStatement() #Function_call_statement:
+// Structure to function calls
+void function_call_structure() #Function_call_structure:
 {}
 {
   <LBRACE> arg_list() <RBRACE> <SEMICOLON>
+}
+
+// Structure to statements
+void statement_begin_structure() #Statement_begin_structure:
+{}
+{
+	<BEGIN>
+		statement_block()
+	<END>
 }
 
 void number(): 

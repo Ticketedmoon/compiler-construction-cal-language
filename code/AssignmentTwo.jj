@@ -347,7 +347,7 @@ void const_decl()      :
 {
 	<CONSTANT> name = identifier() <COLON> 
 	(
-		typeInteger() assignmentExpression()/*@bgen(jjtree) #Const_decl( 3) */
+		typeInteger() assignment_structure()/*@bgen(jjtree) #Const_decl( 3) */
   {
     ASTConst_decl jjtn001 = new ASTConst_decl(JJTCONST_DECL);
     boolean jjtc001 = true;
@@ -368,7 +368,7 @@ void const_decl()      :
   }
 /*@egen*/               
     |
-		typeBoolean() assignmentExpression()/*@bgen(jjtree) #Const_decl( 3) */
+		typeBoolean() assignment_structure()/*@bgen(jjtree) #Const_decl( 3) */
   {
     ASTConst_decl jjtn002 = new ASTConst_decl(JJTCONST_DECL);
     boolean jjtc002 = true;
@@ -609,29 +609,36 @@ void statement_block()      :
 // Skip token is used to skip the expection of anything else inside statement.
 void statement()           :
 {/*@bgen(jjtree) Statement */
-  ASTStatement jjtn000 = new ASTStatement(JJTSTATEMENT);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+ ASTStatement jjtn000 = new ASTStatement(JJTSTATEMENT);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
 {/*@bgen(jjtree) Statement */
  try {
 /*@egen*/
-	identifier() (assignmentExpression() | functionCallStatement())
-	| <BEGIN>
-	      statement_block() 
-	  <END>
-	| <IF> condition()
-	      <BEGIN>
-	          statement_block()
-	      <END>
-	| <ELSE>
-	      <BEGIN>
-		      statement_block()
-		  <END>
-	| <WHILE> condition()
-		  <BEGIN>
-		      statement_block()
-		  <END>
+	identifier() (assignment_structure() | function_call_structure())
+	| statement_begin_structure()
+	| (t = <IF> condition()) statement_begin_structure()/*@bgen(jjtree)*/
+   {
+     jjtree.closeNodeScope(jjtn000, true);
+     jjtc000 = false;
+   }
+/*@egen*/
+	  {jjtn000.value = t.image;}
+	| (t = <ELSE>) statement_begin_structure()/*@bgen(jjtree)*/
+   {
+     jjtree.closeNodeScope(jjtn000, true);
+     jjtc000 = false;
+   }
+/*@egen*/
+	  {jjtn000.value = t.image;}
+	| (t = <WHILE> condition()) statement_begin_structure()/*@bgen(jjtree)*/
+   {
+     jjtree.closeNodeScope(jjtn000, true);
+     jjtc000 = false;
+   }
+/*@egen*/
+	  {jjtn000.value = t.image;}
 	| <SKIP_TOKEN> <SEMICOLON>/*@bgen(jjtree)*/
  } catch (Throwable jjte000) {
    if (jjtc000) {
@@ -1003,13 +1010,14 @@ void nemp_arg_list()      :
     identifier() [<COMMA> nemp_arg_list()]
 }
 
-void assignmentExpression()                :
-{/*@bgen(jjtree) Assignment_exp */
-  ASTAssignment_exp jjtn000 = new ASTAssignment_exp(JJTASSIGNMENT_EXP);
+// Structure to assignments 
+void assignment_structure()                      :
+{/*@bgen(jjtree) Assignment_structure */
+  ASTAssignment_structure jjtn000 = new ASTAssignment_structure(JJTASSIGNMENT_STRUCTURE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
-{/*@bgen(jjtree) Assignment_exp */
+{/*@bgen(jjtree) Assignment_structure */
   try {
 /*@egen*/
   <ASSIGNMENT> expression() <SEMICOLON>/*@bgen(jjtree)*/
@@ -1035,13 +1043,14 @@ void assignmentExpression()                :
 /*@egen*/
 }
 
-void functionCallStatement()                         :
-{/*@bgen(jjtree) Function_call_statement */
-  ASTFunction_call_statement jjtn000 = new ASTFunction_call_statement(JJTFUNCTION_CALL_STATEMENT);
+// Structure to function calls
+void function_call_structure()                         :
+{/*@bgen(jjtree) Function_call_structure */
+  ASTFunction_call_structure jjtn000 = new ASTFunction_call_structure(JJTFUNCTION_CALL_STRUCTURE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
-{/*@bgen(jjtree) Function_call_statement */
+{/*@bgen(jjtree) Function_call_structure */
   try {
 /*@egen*/
   <LBRACE> arg_list() <RBRACE> <SEMICOLON>/*@bgen(jjtree)*/
@@ -1064,6 +1073,41 @@ void functionCallStatement()                         :
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
+/*@egen*/
+}
+
+// Structure to statements
+void statement_begin_structure()                           :
+{/*@bgen(jjtree) Statement_begin_structure */
+  ASTStatement_begin_structure jjtn000 = new ASTStatement_begin_structure(JJTSTATEMENT_BEGIN_STRUCTURE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) Statement_begin_structure */
+ try {
+/*@egen*/
+	<BEGIN>
+		statement_block()
+	<END>/*@bgen(jjtree)*/
+ } catch (Throwable jjte000) {
+   if (jjtc000) {
+     jjtree.clearNodeScope(jjtn000);
+     jjtc000 = false;
+   } else {
+     jjtree.popNode();
+   }
+   if (jjte000 instanceof RuntimeException) {
+     throw (RuntimeException)jjte000;
+   }
+   if (jjte000 instanceof ParseException) {
+     throw (ParseException)jjte000;
+   }
+   throw (Error)jjte000;
+ } finally {
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+   }
+ }
 /*@egen*/
 }
 

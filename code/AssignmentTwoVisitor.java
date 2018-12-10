@@ -23,8 +23,9 @@ public interface AssignmentTwoVisitor
   public Object visit(ASTComparison_op node, Object data);
   public Object visit(ASTArg_list node, Object data);
   public Object visit(ASTNemp_arg_list node, Object data);
-  public Object visit(ASTAssignment_exp node, Object data);
-  public Object visit(ASTFunction_call_statement node, Object data);
+  public Object visit(ASTAssignment_structure node, Object data);
+  public Object visit(ASTFunction_call_structure node, Object data);
+  public Object visit(ASTStatement_begin_structure node, Object data);
   public Object visit(ASTnumber node, Object data);
   public Object visit(ASTidentifier node, Object data);
   public Object visit(ASTanyType node, Object data);
@@ -32,4 +33,4 @@ public interface AssignmentTwoVisitor
   public Object visit(ASTtypeBoolean node, Object data);
   public Object visit(ASTMain node, Object data);
 }
-/* JavaCC - OriginalChecksum=ca1b988144099aded564c7012a992f9f (do not edit this line) */
+/* JavaCC - OriginalChecksum=885e19e4b85761589e5a18f2c675634a (do not edit this line) */

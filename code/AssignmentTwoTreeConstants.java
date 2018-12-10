@@ -23,14 +23,15 @@ public interface AssignmentTwoTreeConstants
   public int JJTCOMPARISON_OP = 19;
   public int JJTARG_LIST = 20;
   public int JJTNEMP_ARG_LIST = 21;
-  public int JJTASSIGNMENT_EXP = 22;
-  public int JJTFUNCTION_CALL_STATEMENT = 23;
-  public int JJTNUMBER = 24;
-  public int JJTIDENTIFIER = 25;
-  public int JJTANYTYPE = 26;
-  public int JJTTYPEINTEGER = 27;
-  public int JJTTYPEBOOLEAN = 28;
-  public int JJTMAIN = 29;
+  public int JJTASSIGNMENT_STRUCTURE = 22;
+  public int JJTFUNCTION_CALL_STRUCTURE = 23;
+  public int JJTSTATEMENT_BEGIN_STRUCTURE = 24;
+  public int JJTNUMBER = 25;
+  public int JJTIDENTIFIER = 26;
+  public int JJTANYTYPE = 27;
+  public int JJTTYPEINTEGER = 28;
+  public int JJTTYPEBOOLEAN = 29;
+  public int JJTMAIN = 30;
 
 
   public String[] jjtNodeName = {
@@ -56,8 +57,9 @@ public interface AssignmentTwoTreeConstants
     "Comparison_op",
     "Arg_list",
     "Nemp_arg_list",
-    "Assignment_exp",
-    "Function_call_statement",
+    "Assignment_structure",
+    "Function_call_structure",
+    "Statement_begin_structure",
     "number",
     "identifier",
     "anyType",
@@ -66,4 +68,4 @@ public interface AssignmentTwoTreeConstants
     "Main",
   };
 }
-/* JavaCC - OriginalChecksum=92cc14475aa9d9e5d56285b1b4f80040 (do not edit this line) */
+/* JavaCC - OriginalChecksum=0b222d0418d9e878b9ef6b5d9b5e8189 (do not edit this line) */

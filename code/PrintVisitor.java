@@ -49,7 +49,6 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		node.jjtGetChild(2).jjtAccept(this, data);
 
 		System.out.println(") is");
-
 		for (int i = 0; i < node.jjtGetChild(3).jjtGetNumChildren(); i++) {
 			System.out.print("    ");
 			node.jjtGetChild(3).jjtGetChild(i).jjtAccept(this, data);
@@ -59,6 +58,7 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		for(int i = 4; i < node.jjtGetNumChildren(); i++) {
         	node.jjtGetChild(i).jjtAccept(this, data);
 		}
+
 		System.out.println("\n    end");
         return data;
     }
@@ -72,6 +72,8 @@ public class PrintVisitor implements AssignmentTwoVisitor
     }
 
     public Object visit(ASTStatement node, Object data) {		
+		if (node.value != null)
+			System.out.print(node.value + " ");
 		node.jjtGetChild(0).jjtAccept(this, data);
 		node.jjtGetChild(1).jjtAccept(this, data);
 		System.out.println(";");
@@ -93,13 +95,20 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		return data;
     }
 
-    public Object visit(ASTAssignment_exp node, Object data) {		
+    public Object visit(ASTAssignment_structure node, Object data) {		
 		System.out.print(" := ");
 		node.jjtGetChild(0).jjtAccept(this, data);
 		return data;
     }
 
-    public Object visit(ASTFunction_call_statement node, Object data) {		
+    public Object visit(ASTStatement_begin_structure node, Object data) {		
+		System.out.print("begin");
+		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print("end");
+		return data;
+    }
+
+    public Object visit(ASTFunction_call_structure node, Object data) {		
 		node.jjtGetChild(0).jjtAccept(this, data);
 		return data;
     }
@@ -166,8 +175,8 @@ public class PrintVisitor implements AssignmentTwoVisitor
     }
 
     public Object visit(ASTNot_op node, Object data) {
-		node.jjtGetChild(0).jjtAccept(this, data);
 		System.out.print("~");
+		node.jjtGetChild(0).jjtAccept(this, data);
 		return data;
     }
 
@@ -194,7 +203,6 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		System.out.print("(");
 		node.jjtGetChild(0).jjtAccept(this, data);
 		System.out.print(")");
-		System.out.println();
 		return(data);
     }
 

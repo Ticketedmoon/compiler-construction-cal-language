@@ -181,11 +181,15 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 		return(node.jjtGetChild(0).jjtAccept(this, data));
 	}
 
-	public Object visit(ASTAssignment_exp node, Object data) {
+	public Object visit(ASTAssignment_structure node, Object data) {
 		return(node.jjtGetChild(0).jjtAccept(this, data));
 	}
 
-	public Object visit(ASTFunction_call_statement node, Object data) {
+	public Object visit(ASTFunction_call_structure node, Object data) {
+		return(node.jjtGetChild(0).jjtAccept(this, data));
+	}
+
+	public Object visit(ASTStatement_begin_structure node, Object data) {
 		return(node.jjtGetChild(0).jjtAccept(this, data));
 	}
 }

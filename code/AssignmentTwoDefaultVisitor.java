@@ -70,10 +70,13 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTNemp_arg_list node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTAssignment_exp node, Object data){
+  public Object visit(ASTAssignment_structure node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTFunction_call_statement node, Object data){
+  public Object visit(ASTFunction_call_structure node, Object data){
+    return defaultVisit(node, data);
+  }
+  public Object visit(ASTStatement_begin_structure node, Object data){
     return defaultVisit(node, data);
   }
   public Object visit(ASTnumber node, Object data){
@@ -95,4 +98,4 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
     return defaultVisit(node, data);
   }
 }
-/* JavaCC - OriginalChecksum=825bbfd151b775dd04445b3f2e46b386 (do not edit this line) */
+/* JavaCC - OriginalChecksum=26afec749ee7855671d194bacbfeaed2 (do not edit this line) */
