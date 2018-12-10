@@ -31,59 +31,61 @@ public interface AssignmentTwoConstants {
   /** RegularExpression Id. */
   int NOT = 14;
   /** RegularExpression Id. */
-  int BOOL_OP = 15;
+  int OR = 15;
   /** RegularExpression Id. */
-  int EQUALS = 16;
+  int AND = 16;
   /** RegularExpression Id. */
-  int NOT_EQUALS = 17;
+  int EQUALS = 17;
   /** RegularExpression Id. */
-  int LESS_THAN = 18;
+  int NOT_EQUALS = 18;
   /** RegularExpression Id. */
-  int LESS_THAN_OR_EQUAL = 19;
+  int LESS_THAN = 19;
   /** RegularExpression Id. */
-  int GREATER_THAN = 20;
+  int LESS_THAN_OR_EQUAL = 20;
   /** RegularExpression Id. */
-  int GREATER_THAN_OR_EQUAL = 21;
+  int GREATER_THAN = 21;
   /** RegularExpression Id. */
-  int VARIABLE = 22;
+  int GREATER_THAN_OR_EQUAL = 22;
   /** RegularExpression Id. */
-  int CONSTANT = 23;
+  int VARIABLE = 23;
   /** RegularExpression Id. */
-  int RETURN = 24;
+  int CONSTANT = 24;
   /** RegularExpression Id. */
-  int INTEGER = 25;
+  int RETURN = 25;
   /** RegularExpression Id. */
-  int BOOLEAN = 26;
+  int INTEGER = 26;
   /** RegularExpression Id. */
-  int VOID = 27;
+  int BOOLEAN = 27;
   /** RegularExpression Id. */
-  int MAIN = 28;
+  int VOID = 28;
   /** RegularExpression Id. */
-  int IF = 29;
+  int MAIN = 29;
   /** RegularExpression Id. */
-  int ELSE = 30;
+  int IF = 30;
   /** RegularExpression Id. */
-  int TRUE = 31;
+  int ELSE = 31;
   /** RegularExpression Id. */
-  int FALSE = 32;
+  int TRUE = 32;
   /** RegularExpression Id. */
-  int WHILE = 33;
+  int FALSE = 33;
   /** RegularExpression Id. */
-  int BEGIN = 34;
+  int WHILE = 34;
   /** RegularExpression Id. */
-  int END = 35;
+  int BEGIN = 35;
   /** RegularExpression Id. */
-  int IS = 36;
+  int END = 36;
   /** RegularExpression Id. */
-  int SKIP_TOKEN = 37;
+  int IS = 37;
   /** RegularExpression Id. */
-  int DIGIT = 38;
+  int SKIP_TOKEN = 38;
   /** RegularExpression Id. */
-  int ID = 39;
+  int DIGIT = 39;
   /** RegularExpression Id. */
-  int LETTER = 40;
+  int ID = 40;
   /** RegularExpression Id. */
-  int UNDERSCORE = 41;
+  int LETTER = 41;
+  /** RegularExpression Id. */
+  int UNDERSCORE = 42;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -105,7 +107,8 @@ public interface AssignmentTwoConstants {
     "\"*\"",
     "\"/\"",
     "\"~\"",
-    "<BOOL_OP>",
+    "\"|\"",
+    "\"&\"",
     "\"=\"",
     "\"!=\"",
     "\"<\"",

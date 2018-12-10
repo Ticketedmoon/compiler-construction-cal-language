@@ -101,7 +101,8 @@ TOKEN:
 	| <MULT: "*">
 	| <DIVIDE: "/">
 	| <NOT: "~">
-	| <BOOL_OP: "|" | "&">
+	| <OR: "|" >
+	| <AND: "&">
 	| <EQUALS: "=">
 	| <NOT_EQUALS: "!=">
 	| <LESS_THAN: "<">
@@ -513,7 +514,34 @@ void parameter_list()                :
 {/*@bgen(jjtree) Parameter_list */
  try {
 /*@egen*/
-	[nemp_parameter_list()]/*@bgen(jjtree)*/
+	[/*@bgen(jjtree) Nemp_parameter_list */
+  {
+    ASTNemp_parameter_list jjtn001 = new ASTNemp_parameter_list(JJTNEMP_PARAMETER_LIST);
+    boolean jjtc001 = true;
+    jjtree.openNodeScope(jjtn001);
+  }
+  try {
+/*@egen*/nemp_parameter_list()/*@bgen(jjtree)*/
+  } catch (Throwable jjte001) {
+    if (jjtc001) {
+      jjtree.clearNodeScope(jjtn001);
+      jjtc001 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte001 instanceof RuntimeException) {
+      throw (RuntimeException)jjte001;
+    }
+    if (jjte001 instanceof ParseException) {
+      throw (ParseException)jjte001;
+    }
+    throw (Error)jjte001;
+  } finally {
+    if (jjtc001) {
+      jjtree.closeNodeScope(jjtn001, true);
+    }
+  }
+/*@egen*/                     ]/*@bgen(jjtree)*/
  } catch (Throwable jjte000) {
    if (jjtc000) {
      jjtree.clearNodeScope(jjtn000);
@@ -537,36 +565,37 @@ void parameter_list()                :
 }
 
 // Non-empty parameter list structure.
-void nemp_parameter_list()                        :
-{/*@bgen(jjtree) #Nemp_parameter_list( 2) */
-  ASTNemp_parameter_list jjtn000 = new ASTNemp_parameter_list(JJTNEMP_PARAMETER_LIST);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
-{/*@bgen(jjtree) #Nemp_parameter_list( 2) */
- try {
-/*@egen*/
-	identifier() <COLON> anyType() [<COMMA> nemp_parameter_list()]/*@bgen(jjtree)*/
- } catch (Throwable jjte000) {
-   if (jjtc000) {
-     jjtree.clearNodeScope(jjtn000);
-     jjtc000 = false;
-   } else {
-     jjtree.popNode();
-   }
-   if (jjte000 instanceof RuntimeException) {
-     throw (RuntimeException)jjte000;
-   }
-   if (jjte000 instanceof ParseException) {
-     throw (ParseException)jjte000;
-   }
-   throw (Error)jjte000;
- } finally {
-   if (jjtc000) {
-     jjtree.closeNodeScope(jjtn000,  2);
-   }
- }
-/*@egen*/
+void nemp_parameter_list()      :
+{}
+{
+	identifier() <COLON> anyType() [<COMMA>/*@bgen(jjtree) Nemp_parameter_list */
+                                         {
+                                           ASTNemp_parameter_list jjtn001 = new ASTNemp_parameter_list(JJTNEMP_PARAMETER_LIST);
+                                           boolean jjtc001 = true;
+                                           jjtree.openNodeScope(jjtn001);
+                                         }
+                                         try {
+/*@egen*/ nemp_parameter_list()/*@bgen(jjtree)*/
+                                         } catch (Throwable jjte001) {
+                                           if (jjtc001) {
+                                             jjtree.clearNodeScope(jjtn001);
+                                             jjtc001 = false;
+                                           } else {
+                                             jjtree.popNode();
+                                           }
+                                           if (jjte001 instanceof RuntimeException) {
+                                             throw (RuntimeException)jjte001;
+                                           }
+                                           if (jjte001 instanceof ParseException) {
+                                             throw (ParseException)jjte001;
+                                           }
+                                           throw (Error)jjte001;
+                                         } finally {
+                                           if (jjtc001) {
+                                             jjtree.closeNodeScope(jjtn001, true);
+                                           }
+                                         }
+/*@egen*/                     ]
 }
 
 // A statement block is simply 0 or more statements.
@@ -591,7 +620,7 @@ void statement()           :
 	| <BEGIN>
 	      statement_block() 
 	  <END>
-	| <IF> condition() 
+	| <IF> condition()
 	      <BEGIN>
 	          statement_block()
 	      <END>
@@ -728,9 +757,44 @@ void simple_expression()     :
 // Following is a simple condition with 0 or 1 logical operators followed by a condition.
 // Structure is very similar to expression() above but with the NOT token.
 void condition()      :
-{}
+{Token t;}
 {   
-    [<NOT>] simple_condition() [<BOOL_OP> condition()]
+    [/*@bgen(jjtree) Not_op */
+     {
+       ASTNot_op jjtn001 = new ASTNot_op(JJTNOT_OP);
+       boolean jjtc001 = true;
+       jjtree.openNodeScope(jjtn001);
+     }
+     try {
+/*@egen*/<NOT>/*@bgen(jjtree)*/
+     } finally {
+       if (jjtc001) {
+         jjtree.closeNodeScope(jjtn001, true);
+       }
+     }
+/*@egen*/        ] simple_condition() 
+	[
+		((t = <AND> | t = <OR>) condition()/*@bgen(jjtree) Binary_logical_op */
+  {
+    ASTBinary_logical_op jjtn002 = new ASTBinary_logical_op(JJTBINARY_LOGICAL_OP);
+    boolean jjtc002 = true;
+    jjtree.openNodeScope(jjtn002);
+  }
+  try {
+/*@egen*//*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn002, true);
+    jjtc002 = false;
+  }
+/*@egen*/
+		{jjtn002.value = t.image;}/*@bgen(jjtree)*/
+  } finally {
+    if (jjtc002) {
+      jjtree.closeNodeScope(jjtn002, true);
+    }
+  }
+/*@egen*/                   )
+	]
 }
 
 /* A simple condition takes a left bracket, condition, right bracket or
@@ -739,11 +803,59 @@ void condition()      :
  * The special_expression is necessary for allowing the parser to have no difficulty,
  * when deciding what choice to make in our parser.
 */
-void simple_condition()      :
-{}
-{   
-    <LBRACE> condition() <RBRACE> 
-    | special_expression() comp_op() expression()
+void simple_condition()           :
+{/*@bgen(jjtree) Condition */
+ ASTCondition jjtn000 = new ASTCondition(JJTCONDITION);
+ boolean jjtc000 = true;
+ jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
+{/*@bgen(jjtree) Condition */
+    try {
+/*@egen*/   
+    <LBRACE> condition() <RBRACE>
+    | special_expression() ((t = <EQUALS> 
+	| t = <NOT_EQUALS> | t = <LESS_THAN> 
+	| t = <LESS_THAN_OR_EQUAL> | t = <GREATER_THAN> 
+	| t = <GREATER_THAN_OR_EQUAL>) expression()/*@bgen(jjtree) #Comparison_op( 2) */
+ {
+   ASTComparison_op jjtn001 = new ASTComparison_op(JJTCOMPARISON_OP);
+   boolean jjtc001 = true;
+   jjtree.openNodeScope(jjtn001);
+ }
+ try {
+/*@egen*//*@bgen(jjtree)*/
+ {
+   jjtree.closeNodeScope(jjtn001,  2);
+   jjtc001 = false;
+ }
+/*@egen*/ 
+	{jjtn001.value = t.image;}/*@bgen(jjtree)*/
+ } finally {
+   if (jjtc001) {
+     jjtree.closeNodeScope(jjtn001,  2);
+   }
+ }
+/*@egen*/                  )/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
 }
 
 // Special Expression structure - similar to expression / condition.
@@ -776,11 +888,37 @@ void special_expression()      :
 }
 
 // Similar to simple_expression, but without the <LBRACE> choice conflict.
-void simple_special_expression()      :
-{}
-{
-    <ID> [<LBRACE> arg_list() <RBRACE>]
-    | fragment()
+void simple_special_expression()     :
+{/*@bgen(jjtree) Exp */
+  ASTExp jjtn000 = new ASTExp(JJTEXP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) Exp */
+    try {
+/*@egen*/
+    identifier() [<LBRACE> arg_list() <RBRACE>]
+    | fragment()/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
 }
 
 // Argument list is 0 or 1 non-empty argument lists.
@@ -793,7 +931,34 @@ void arg_list()          :
 {/*@bgen(jjtree) Arg_list */
     try {
 /*@egen*/
-    [nemp_arg_list()]/*@bgen(jjtree)*/
+    [/*@bgen(jjtree) Nemp_arg_list */
+     {
+       ASTNemp_arg_list jjtn001 = new ASTNemp_arg_list(JJTNEMP_ARG_LIST);
+       boolean jjtc001 = true;
+       jjtree.openNodeScope(jjtn001);
+     }
+     try {
+/*@egen*/nemp_arg_list()/*@bgen(jjtree)*/
+     } catch (Throwable jjte001) {
+       if (jjtc001) {
+         jjtree.clearNodeScope(jjtn001);
+         jjtc001 = false;
+       } else {
+         jjtree.popNode();
+       }
+       if (jjte001 instanceof RuntimeException) {
+         throw (RuntimeException)jjte001;
+       }
+       if (jjte001 instanceof ParseException) {
+         throw (ParseException)jjte001;
+       }
+       throw (Error)jjte001;
+     } finally {
+       if (jjtc001) {
+         jjtree.closeNodeScope(jjtn001, true);
+       }
+     }
+/*@egen*/               ]/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -885,14 +1050,6 @@ void functionCallStatement()                         :
     }
   }
 /*@egen*/
-}
-
-// List of our comparison operator tokens.
-void comp_op()      :
-{}
-{
-    <EQUALS> | <NOT_EQUALS> | <LESS_THAN> | <LESS_THAN_OR_EQUAL>
-    | <GREATER_THAN> | <GREATER_THAN_OR_EQUAL>
 }
 
 void number(): 

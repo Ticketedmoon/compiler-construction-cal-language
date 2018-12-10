@@ -46,13 +46,7 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		System.out.print(" ");
         node.jjtGetChild(1).jjtAccept(this, data);
 		System.out.print("(");
-		
-		for (int i = 0; i < node.jjtGetChild(2).jjtGetNumChildren()-1; i++) {
-			node.jjtGetChild(2).jjtGetChild(i).jjtAccept(this, data);
-			System.out.print(": ");	
-			node.jjtGetChild(2).jjtGetChild(i+1).jjtAccept(this, data);
-			System.out.print(";");	
-		}
+		node.jjtGetChild(2).jjtAccept(this, data);
 
 		System.out.println(") is");
 
@@ -106,16 +100,18 @@ public class PrintVisitor implements AssignmentTwoVisitor
     }
 
     public Object visit(ASTFunction_call_statement node, Object data) {		
-		System.out.print("(");
 		node.jjtGetChild(0).jjtAccept(this, data);
-		System.out.print(")");
 		return data;
     }
 
     public Object visit(ASTNemp_parameter_list node, Object data) {
-		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
-    		node.jjtGetChild(i).jjtAccept(this, data);
-			System.out.println(";");
+    	node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print(": ");
+    	node.jjtGetChild(1).jjtAccept(this, data);
+
+		if (node.jjtGetNumChildren() > 2) {
+			System.out.print(", ");
+			node.jjtGetChild(2).jjtAccept(this, data);
 		}
 		return data;
     }
@@ -133,12 +129,25 @@ public class PrintVisitor implements AssignmentTwoVisitor
     }
 
     public Object visit(ASTParameter_list node, Object data) {
-		node.jjtGetChild(0).jjtAccept(this, data);
+		if (node.jjtGetNumChildren() > 0)
+			node.jjtGetChild(0).jjtAccept(this, data);
 		return data;
     }
 
     public Object visit(ASTArg_list node, Object data) {
-		System.out.print(node.value);
+		System.out.print("(");
+		if (node.jjtGetNumChildren() > 0)
+    		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print(")");	
+		return data;
+    }
+
+    public Object visit(ASTNemp_arg_list node, Object data) {
+		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
+    		node.jjtGetChild(i).jjtAccept(this, data);
+			if (i < node.jjtGetNumChildren()-1)
+				System.out.print(", ");
+		}
 		return data;
     }
 
@@ -149,34 +158,40 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		return data;
     }
 
-    public Object visit(ASTBool_op node, Object data) {
+    public Object visit(ASTBinary_logical_op node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this,data);
+		System.out.print(" " + node.value + " ");
+		node.jjtGetChild(1).jjtAccept(this, data);
+		return data;
+    }
+
+    public Object visit(ASTNot_op node, Object data) {
+		System.out.print("~");
+		return data;
+    }
+
+    public Object visit(ASTComparison_op node, Object data) {
 		node.jjtGetChild(0).jjtAccept(this, data);
 		System.out.print(" " + node.value + " ");
 		node.jjtGetChild(1).jjtAccept(this, data);
 		return data;
     }
 
-    public Object visit(ASTBinary_mult_op node, Object data) {
-		System.out.print(" " + node.value + " ");
-		return data;
-    }
-
-    public Object visit(ASTNot_op node, Object data) {
-		System.out.print("~");
-		return(node.jjtGetChild(0).jjtAccept(this, data));
-    }
-
-    public Object visit(ASTsimple_condition node, Object data) {
-		return(node.jjtGetChild(0).jjtAccept(this, data));
-	}
-
-    public Object visit(ASTcondition node, Object data) {
-		return(node.jjtGetChild(0).jjtAccept(this, data));
+    public Object visit(ASTSimple_condition node, Object data) {
+		for(int i = 0; i < node.jjtGetNumChildren(); i++)
+    		node.jjtGetChild(i).jjtAccept(this, data);
+		return(data);
 	}
 
     public Object visit(ASTExp node, Object data) {
 		for(int i = 0; i < node.jjtGetNumChildren(); i++)
     		node.jjtGetChild(i).jjtAccept(this, data);
+		return(data);
+    }
+
+    public Object visit(ASTCondition node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.println();
 		return(data);
     }
 

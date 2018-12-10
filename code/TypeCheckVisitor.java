@@ -33,6 +33,10 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 		return(node.jjtGetChild(0).jjtAccept(this, data));
     }
 
+    public Object visit(ASTNemp_arg_list node, Object data) {
+		return(node.jjtGetChild(0).jjtAccept(this, data));
+    }
+
     public Object visit(ASTDecl node, Object data) {
 		return DataType.Declaration;
     }
@@ -95,22 +99,14 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	    	return DataType.TypeUnknown;
     }
 
-    public Object visit(ASTBool_op node, Object data) {
+    public Object visit(ASTBinary_logical_op node, Object data) {
 		if (((DataType)node.jjtGetChild(0).jjtAccept(this, data) == DataType.TypeBoolean) && ((DataType)node.jjtGetChild(1).jjtAccept(this, data) == DataType.TypeBoolean))
 	    	return DataType.TypeBoolean;
 		else
 	    	return DataType.TypeUnknown;
     }
 
-    public Object visit(ASTBinary_mult_op node, Object data) {
-		if (((DataType)node.jjtGetChild(0).jjtAccept(this, data) == DataType.TypeInteger) && ((DataType)node.jjtGetChild(1).jjtAccept(this, data) == DataType.TypeInteger))
-	    	return DataType.TypeInteger;
-		else
-	    	return DataType.TypeUnknown;
-    }
-
-	public Object visit(ASTNot_op node, Object data)
-    {
+	public Object visit(ASTNot_op node, Object data) {
 		if ((DataType)node.jjtGetChild(0).jjtAccept(this, data) != DataType.TypeBoolean)
 	    	return DataType.TypeUnknown;
 		else
@@ -118,6 +114,18 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
     }
 
     public Object visit(ASTExp node, Object data) {
+		return(node.jjtGetChild(0).jjtAccept(this, data));
+    }
+
+    public Object visit(ASTCondition node, Object data) {
+		return(node.jjtGetChild(0).jjtAccept(this, data));
+    }
+
+    public Object visit(ASTComparison_op node, Object data) {
+		return(node.jjtGetChild(0).jjtAccept(this, data));
+    }
+
+    public Object visit(ASTSimple_condition node, Object data) {
 		return(node.jjtGetChild(0).jjtAccept(this, data));
     }
 

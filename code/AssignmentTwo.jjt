@@ -97,7 +97,8 @@ TOKEN:
 	| <MULT: "*">
 	| <DIVIDE: "/">
 	| <NOT: "~">
-	| <BOOL_OP: "|" | "&">
+	| <OR: "|" >
+	| <AND: "&">
 	| <EQUALS: "=">
 	| <NOT_EQUALS: "!=">
 	| <LESS_THAN: "<">
@@ -239,14 +240,14 @@ void function_return() #void:
 void parameter_list() #Parameter_list:
 {}
 {
-	[nemp_parameter_list()]
+	[nemp_parameter_list() #Nemp_parameter_list]
 }
 
 // Non-empty parameter list structure.
-void nemp_parameter_list() #Nemp_parameter_list(2):
+void nemp_parameter_list() #void:
 {}
 {
-	identifier() <COLON> anyType() [<COMMA> nemp_parameter_list()]
+	identifier() <COLON> anyType() [<COMMA> nemp_parameter_list() #Nemp_parameter_list]
 }
 
 // A statement block is simply 0 or more statements.
@@ -265,7 +266,7 @@ void statement() #Statement:
 	| <BEGIN>
 	      statement_block() 
 	  <END>
-	| <IF> condition() 
+	| <IF> condition()
 	      <BEGIN>
 	          statement_block()
 	      <END>
@@ -320,9 +321,13 @@ void simple_expression() #Exp:
 // Following is a simple condition with 0 or 1 logical operators followed by a condition.
 // Structure is very similar to expression() above but with the NOT token.
 void condition() #void:
-{}
+{Token t;}
 {   
-    [<NOT>] simple_condition() [<BOOL_OP> condition()]
+    [<NOT> #Not_op] simple_condition() 
+	[
+		((t = <AND> | t = <OR>) condition()
+		{jjtThis.value = t.image;} #Binary_logical_op)
+	]
 }
 
 /* A simple condition takes a left bracket, condition, right bracket or
@@ -331,11 +336,15 @@ void condition() #void:
  * The special_expression is necessary for allowing the parser to have no difficulty,
  * when deciding what choice to make in our parser.
 */
-void simple_condition() #void:
-{}
+void simple_condition() #Condition:
+{Token t;}
 {   
-    <LBRACE> condition() <RBRACE> 
-    | special_expression() comp_op() expression()
+    <LBRACE> condition() <RBRACE>
+    | special_expression() ((t = <EQUALS> 
+	| t = <NOT_EQUALS> | t = <LESS_THAN> 
+	| t = <LESS_THAN_OR_EQUAL> | t = <GREATER_THAN> 
+	| t = <GREATER_THAN_OR_EQUAL>) expression() 
+	{jjtThis.value = t.image;} #Comparison_op(2))
 }
 
 // Special Expression structure - similar to expression / condition.
@@ -350,10 +359,10 @@ void special_expression() #void:
 }
 
 // Similar to simple_expression, but without the <LBRACE> choice conflict.
-void simple_special_expression() #void:
+void simple_special_expression() #Exp:
 {}
 {
-    <ID> [<LBRACE> arg_list() <RBRACE>]
+    identifier() [<LBRACE> arg_list() <RBRACE>]
     | fragment()
 }
 
@@ -361,7 +370,7 @@ void simple_special_expression() #void:
 void arg_list() #Arg_list:
 {}
 {
-    [nemp_arg_list()]
+    [nemp_arg_list() #Nemp_arg_list]
 }
 
 // Non-empty argument list, is a list of IDs with COMMAs separating them.
@@ -381,14 +390,6 @@ void functionCallStatement() #Function_call_statement:
 {}
 {
   <LBRACE> arg_list() <RBRACE> <SEMICOLON>
-}
-
-// List of our comparison operator tokens.
-void comp_op() #void:
-{}
-{
-    <EQUALS> | <NOT_EQUALS> | <LESS_THAN> | <LESS_THAN_OR_EQUAL>
-    | <GREATER_THAN> | <GREATER_THAN_OR_EQUAL>
 }
 
 void number(): 

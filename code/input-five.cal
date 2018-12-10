@@ -4,7 +4,7 @@ variable isOn : boolean;
 variable isOff : boolean;
 variable switch : boolean;
 
-integer hello() is
+integer hello(x : integer, y: boolean) is
 	variable i : integer;
 	variable j : boolean;
 	begin
@@ -24,4 +24,5 @@ main
 	begin
 		variable z : integer;
 		x := getIsOff();
+		a := getIsOff(x, y, z);
 	end
