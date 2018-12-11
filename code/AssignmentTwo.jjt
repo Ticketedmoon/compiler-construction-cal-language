@@ -1,15 +1,17 @@
 /* Shane Creedon 
  * Student ID: 15337356
- * Module: CA4003 Compiler Construction Assignment 1
+ * Module: CA4003 Compiler Construction Assignment 2
  * @David Sinclair: Please use this version of my code as my final edition.
  */
 
 // Options for Lexer and Parser
 options {
-	STATIC = false;
+	JAVA_UNICODE_ESCAPE = true;
 	IGNORE_CASE = true;
+
 	MULTI=true;
 	VISITOR=true;
+	NODE_DEFAULT_VOID = true;
 }
 
 // Define Parser Scope
@@ -21,55 +23,41 @@ PARSER_BEGIN(AssignmentTwo)
 	// Main class for passing in CAL code.
 	class AssignmentTwo {
 
-		public static Hashtable ST = new Hashtable();
+		public static STC ST = new STC();
+		public static String scope = "global";
 		
-		public static void main(String[] args) throws ParseException, TokenMgrError, FileNotFoundException {
-			
-			String temp;
-			STC temp2;
+		public static void main(String[] args) throws FileNotFoundException {
 			
 			if(args.length < 1) {		
 				System.out.println("Please pass in the filename.");
 				System.exit(1);
 			}
-		
-			// parser initialisation
-			AssignmentTwo parser = new AssignmentTwo(new FileInputStream(args[0]));
+			
+			try {	
+				// parser initialisation
+				AssignmentTwo parser = new AssignmentTwo(new FileInputStream(args[0]));
 
-			SimpleNode root = parser.program();
-			System.out.println("Abstract Syntax Tree:");
-			root.dump(" ");
+				SimpleNode root = parser.program();
+				System.out.println("Abstract Syntax Tree:");
+				root.dump(" ");
 
-			System.out.println();
-			System.out.println("Symbol Table:");
+				System.out.println();
+				System.out.println("Symbol Table:");
+				ST.print();
 
-			Enumeration t = ST.keys();
+				System.out.println();
+				System.out.println("Program:");
+				PrintVisitor pv = new PrintVisitor();
+				root.jjtAccept(pv, null);
 
-			while (t.hasMoreElements())
-			{
-			  temp = (String)t.nextElement();
-			  temp2 = (STC)ST.get(temp);
-			  System.out.println(temp);
-			  if (temp2.type != null)
-			  {
-				System.out.println(" type = " + temp2.type);
-			  }
-			  if (temp2.value != null)
-			  {
-				System.out.println(" value = " + temp2.value);
-			  }
+				System.out.println();
+				System.out.println("Type Checking:");
+				TypeCheckVisitor tc = new TypeCheckVisitor();
+				root.jjtAccept(tc, ST);  			
+
+			} catch (ParseException e) {
+				System.err.println(e);
 			}
-
-			System.out.println();
-			System.out.println("Program:");
-			PrintVisitor pv = new PrintVisitor();
-			root.jjtAccept(pv, null);
-
-			System.out.println();
-			System.out.println("Type Checking:");
-			TypeCheckVisitor tc = new TypeCheckVisitor();
-			root.jjtAccept(tc, ST);  			
-
 		}
 	}
 
@@ -131,7 +119,7 @@ TOKEN:
 // Identifier Tokens                                                               
 TOKEN:                                                                             
 {                                                                                  
-    <DIGIT: "0" | (["1" - "9"]) (["0" - "9"])* >
+    <DIGIT: "0" | ((<MINUS>)? ["1" - "9"] (["0" - "9"])*) >
     | <ID: <LETTER>(<LETTER>|<DIGIT>|<UNDERSCORE>)* >                              
     | <# LETTER: (["a"-"z", "A"-"Z"])+ >
     | <# UNDERSCORE: "_" >                                                         
@@ -141,17 +129,16 @@ TOKEN:
 // 0 or 1 declaration lists, followed by
 // 0 or 1 function lists, followed by
 // our main function.
-SimpleNode program():
-{}
+SimpleNode program() #Program: {}
 {	
 	// Declarations
-	[dec_list()]
+	[DeclarationList()]
 
 	// Functions
-	[function_list() #Function_list]
+	[FunctionList() #FunctionList]
 
 	// Main Program
-	main()
+	Main()
 	<EOF>
 
 	{return jjtThis;}
@@ -159,57 +146,50 @@ SimpleNode program():
 
 /* Declaration Rules */
 // A declaration list has one or more declarations.
-void dec_list() #Dec_list:
+void DeclarationList() #DeclarationList: 
 {}
 {
-	(decl() #Decl)+
+	(Declaration() <SEMICOLON>)+
 }
 
 /* A declaration is comprised of either:
  * 1) A Variable declaration
  * 2) A Constant declaration
  */
-void decl() #void:
+void Declaration():
 {}
 {
-	var_decl() 
-	| const_decl()
+	VariableDeclaration() 
+	| ConstantDeclaration()
 }
 
 // Variable structure construct
-void var_decl() #void:
-{Token t; String name;}
+void VariableDeclaration() #VarDecl: {Token t; String id; String type;}
 {
-	<VARIABLE> name = identifier() <COLON>
-	(
-		typeInteger() <SEMICOLON> 
-		{ST.put(name, new STC("Integer", name));} #Var_decl(2)
-    |
-		typeBoolean() <SEMICOLON>
-		{ST.put(name, new STC("Boolean", name));} #Var_decl(2)
-	)
+	t = <VARIABLE> id = Identifier() <COLON> type = Type()
+	{
+		jjtThis.value = t.image;
+		ST.put(id, type, "var", scope);
+	}
 }
 
 // Constant structure construct
-void const_decl() #void:
-{Token t; String name;}
+void ConstantDeclaration() #ConstDecl:
+{Token t; String id; String type;}
 {
-	<CONSTANT> name = identifier() <COLON> 
-	(
-		typeInteger() assignment_structure()
-		{ST.put(name, new STC("Integer", name));} #Const_decl(3)
-    |
-		typeBoolean() assignment_structure()
-		{ST.put(name, new STC("Boolean", name));} #Const_decl(3)
-	)
+	t = <CONSTANT> id = Identifier() <COLON> type = Type() <ASSIGNMENT> expression()
+	{
+		jjtThis.value = t.image;
+		ST.put(id, type, "const", scope);
+	}
 }
 
 /* Function Rules */
 // A function_list has one or more functions
-void function_list() #void:
+void FunctionList():
 {}
 {
-	(function() #Function) [function_list()]
+	(function() #Function) [FunctionList()]
 }
 
 // Function definition
@@ -217,18 +197,18 @@ void function_list() #void:
 // Takes 0 or 1 declaration lists.
 // Within the function begin, we define a statement block 0 or 1 times.
 // Return 0 or 1 expressions. 
-void function() #void:
+void function():
 {}
 {
-	anyType() identifier() <LBRACE> parameter_list() <RBRACE> <IS>
-	[dec_list()]
+	Type() Identifier() <LBRACE> parameter_list() <RBRACE> <IS>
+	[DeclarationList()]
 	<BEGIN>
 		(statement_block() #Statement_block)
 		function_return()
 	<END>
 }
 
-void function_return() #void:
+void function_return():
 {}
 {
 	((<RETURN> <LBRACE> [expression()] <RBRACE> <SEMICOLON>) #Return)
@@ -240,18 +220,18 @@ void function_return() #void:
 void parameter_list() #Parameter_list:
 {}
 {
-	[nemp_parameter_list() #Nemp_parameter_list]
+	[nemp_parameter_list() #Parameter]
 }
 
 // Non-empty parameter list structure.
-void nemp_parameter_list() #void:
+void nemp_parameter_list():
 {}
 {
-	identifier() <COLON> anyType() [<COMMA> nemp_parameter_list() #Nemp_parameter_list]
+	Identifier() <COLON> Type() [<COMMA> nemp_parameter_list() #Parameter]
 }
 
 // A statement block is simply 0 or more statements.
-void statement_block() #void:
+void statement_block():
 {}
 {
 	(statement())*
@@ -262,13 +242,13 @@ void statement_block() #void:
 void statement() #Statement:
 {Token t;}
 {
-	identifier() (assignment_structure() | function_call_structure())
+	Identifier() (assignment_structure() | function_call_structure())
 	| statement_begin_structure()
-	| (t = <IF> condition()) statement_begin_structure()
+	| t = <IF> (condition() #Condition) statement_begin_structure()
 	  {jjtThis.value = t.image;}
-	| (t = <ELSE>) statement_begin_structure()
+	| t = <ELSE> statement_begin_structure()
 	  {jjtThis.value = t.image;}
-	| (t = <WHILE> condition()) statement_begin_structure()
+	| t = <WHILE> (condition() #Condition) statement_begin_structure()
 	  {jjtThis.value = t.image;}
 	| <SKIP_TOKEN> <SEMICOLON>
 }
@@ -276,23 +256,25 @@ void statement() #Statement:
 // Fragment definition - tied to expression definition.
 // An expression can evaluate to our list of primitive tokens - 
 // Minus Digit, Minus ID, Digit, True, False.
-void fragment() #void:
+void fragment():
 {Token t;}
 {
-    ((t = <MINUS>) (number() | identifier()) {jjtThis.value = t.image;} #Minus_sign(1))
-    | number() | <TRUE> | <FALSE>
+    ((t = <MINUS>) (Number() | Identifier()) {jjtThis.value = t.image;} #Minus_sign(1))
+    | Number() | <TRUE> | <FALSE>
 }
 
 /* Expression can be a simple_expression() followed by 0 or 1 more
  * Arithmetic operators and an expression.
  */
-void expression() #void:
+void expression() #Exp:
 {Token t;}
 {
     simple_expression() 
 	[
-		((t = <PLUS> | t = <MINUS> | t = <MULT> | t = <DIVIDE>) expression() 
-		{jjtThis.value = t.image;} #Binary_arith_op(2))
+		t = <PLUS> expression()   {jjtThis.value = t.image;} #Add_Op(2)
+	| 	t = <MINUS> expression()  {jjtThis.value = t.image;} #Minus_Op(2)
+	| 	t = <MULT> expression()   {jjtThis.value = t.image;} #Mult_Op(2)
+	| 	t = <DIVIDE> expression() {jjtThis.value = t.image;} #Div_Op(2)
 	]
 }
 
@@ -301,25 +283,25 @@ void expression() #void:
  * 2) An expression with a Left parenthese and Right parenthese surrounding.
  * 3) An ID followed by 0 or 1 Left parenthese + argument list + right parenthese.
  */
-void simple_expression() #Exp:
+void simple_expression():
 {}
 {
-    <LBRACE> expression() <RBRACE>
-    | identifier() [<LBRACE> arg_list() <RBRACE>]
+    <LBRACE> (expression() #Bracket_Expression) <RBRACE>
+    | Identifier() [<LBRACE> arg_list() <RBRACE>]
     | fragment()
 }
 
 // A condition firstly can be instantiated with either a not token (~ tilde) or not.
 // Following is a simple condition with 0 or 1 logical operators followed by a condition.
 // Structure is very similar to expression() above but with the NOT token.
-void condition() #Condition:
+void condition():
 {Token t;}
 {   
     ((<NOT> simple_condition() #Not_op(1))
 	| simple_condition())
 	[
-		((t = <AND> | t = <OR>) condition()
-		{jjtThis.value = t.image;} #Binary_logical_op(2))
+		t = <AND> condition() {jjtThis.value = t.image;} #Logical_Conjunction(2)
+	|   t = <OR> condition() {jjtThis.value = t.image;} #Logical_Disjunction(2)
 	]
 }
 
@@ -329,25 +311,30 @@ void condition() #Condition:
  * The special_expression is necessary for allowing the parser to have no difficulty,
  * when deciding what choice to make in our parser.
 */
-void simple_condition() #void:
+void simple_condition():
 {Token t;}
 {   
-    <LBRACE> condition() <RBRACE>
-    | special_expression() ((t = <EQUALS> 
-	| t = <NOT_EQUALS> | t = <LESS_THAN> 
-	| t = <LESS_THAN_OR_EQUAL> | t = <GREATER_THAN> 
-	| t = <GREATER_THAN_OR_EQUAL>) expression() 
-	{jjtThis.value = t.image;} #Comparison_op(2))
+    <LBRACE> (condition() #Bracket_Condition)<RBRACE>
+    | special_expression() 
+	(	t = <EQUALS>  expression() {jjtThis.value = t.image;} #Equals(2)
+	| 	t = <NOT_EQUALS>  expression() {jjtThis.value = t.image;} #Not_Equals(2)
+	| 	t = <LESS_THAN>  expression() {jjtThis.value = t.image;} #Less_Than(2)
+	| 	t = <LESS_THAN_OR_EQUAL>  expression() {jjtThis.value = t.image;} #Less_Than_Or_Equal(2)
+	| 	t = <GREATER_THAN>  expression() {jjtThis.value = t.image;} #Greater_Than(2)
+	| 	t = <GREATER_THAN_OR_EQUAL> expression() {jjtThis.value = t.image;} #Greater_Than_Or_Equal(2)
+	) 
 }
 
 // Special Expression structure - similar to expression / condition.
-void special_expression() #void:
+void special_expression():
 {Token t;}
 {
     simple_special_expression() 
 	[
-		((t = <PLUS> | t = <MINUS> | t = <MULT> | t = <DIVIDE>) special_expression() 
-		{jjtThis.value = t.image;} #Binary_arith_op(2))
+		t = <PLUS> special_expression()   {jjtThis.value = t.image;} #Add_Op(2)
+	| 	t = <MINUS> special_expression()  {jjtThis.value = t.image;} #Minus_Op(2)
+	| 	t = <MULT> special_expression()   {jjtThis.value = t.image;} #Mult_Op(2)
+	| 	t = <DIVIDE> special_expression() {jjtThis.value = t.image;} #Div_Op(2)
 	]
 }
 
@@ -355,7 +342,7 @@ void special_expression() #void:
 void simple_special_expression() #Exp:
 {}
 {
-    identifier() [<LBRACE> arg_list() <RBRACE>]
+    Identifier() [<LBRACE> arg_list() <RBRACE>]
     | fragment()
 }
 
@@ -367,10 +354,10 @@ void arg_list() #Arg_list:
 }
 
 // Non-empty argument list, is a list of IDs with COMMAs separating them.
-void nemp_arg_list() #void:
+void nemp_arg_list():
 {}
 {
-    identifier() [<COMMA> nemp_arg_list()]
+    Identifier() [<COMMA> nemp_arg_list()]
 }
 
 // Structure to assignments 
@@ -388,7 +375,7 @@ void function_call_structure() #Function_call_structure:
 }
 
 // Structure to statements
-void statement_begin_structure() #Statement_begin_structure:
+void statement_begin_structure() #Statement_Begin_Structure:
 {}
 {
 	<BEGIN>
@@ -396,44 +383,34 @@ void statement_begin_structure() #Statement_begin_structure:
 	<END>
 }
 
-void number(): 
+void Number() #Number: 
 {Token t;}
 {
 	t = <DIGIT> {jjtThis.value = t.image;}
 }
 
-String identifier(): 
+String Identifier() #Identifier:
 {Token t;}
 {
-	t = <ID> {jjtThis.value = t.image; return t.image;}
+  t = <ID> {jjtThis.value = t.image; return t.image;}
 }
 
 // Defines the type for AST matching.
-void anyType():
+String Type() #Type:
 {Token t;}
 {
-	(t = <VOID> | t = <INTEGER> | t = <BOOLEAN>) {jjtThis.value = t.image;}
-}
-
-void typeInteger():
-{Token t;}
-{
-	t = <INTEGER> {jjtThis.value = t.image;}
-}
-
-void typeBoolean():
-{Token t;}
-{
-	t = <BOOLEAN> {jjtThis.value = t.image;}
+	t = <VOID>  {jjtThis.value = t.image; return t.image;}
+  | t = <INTEGER>  {jjtThis.value = t.image; return t.image;}
+  | t = <BOOLEAN> {jjtThis.value = t.image; return t.image;}
 }
 
 // Our main function definition.
-void main() #Main:
+void Main() #Main:
 {}
 {
 	<MAIN>
 		<BEGIN> 
-			[dec_list()] 
+			[DeclarationList()] 
 			(statement_block() #Statement_block) 
 		<END>
 }

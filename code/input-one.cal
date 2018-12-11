@@ -9,27 +9,28 @@ begIN
 	// figure out sign of result and covert args to absolute values
 	if ~(x < 0 & ~(y >= 0 | x <= x))
 	begin
-		minus_sign := true;
+		minus_sign := True_;
 		x := -x;
+		p := -p;
 	eND
 	elSe
 	beGin
 		IF (x = 5)
 		begin
-			minus_sign := true;
+			minus_sign := True_;
 			y := -y;
 		end
 		else
 		begin
 			if (x < 0) & y < 0
 			begin
-				minus_sign := false;
+				minus_sign := False_;
 				x := -x;
 				y := -y;
 			end			
 			else
 			begin
-				minus_sign := false;
+				minus_sign := False_;
 			end
 		end
 	end
@@ -41,7 +42,7 @@ begIN
 		result := result + x;
 		y := y - 1;
 	end
-	if ~(true = 5)
+	if ~(true_ = 5)
 	begin
 		result := -result;
 	end

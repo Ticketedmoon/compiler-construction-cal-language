@@ -2,70 +2,86 @@
 public interface AssignmentTwoTreeConstants
 {
   public int JJTPROGRAM = 0;
-  public int JJTFUNCTION_LIST = 1;
-  public int JJTDEC_LIST = 2;
-  public int JJTDECL = 3;
-  public int JJTVOID = 4;
-  public int JJTVAR_DECL = 5;
-  public int JJTCONST_DECL = 6;
-  public int JJTFUNCTION = 7;
-  public int JJTSTATEMENT_BLOCK = 8;
-  public int JJTRETURN = 9;
-  public int JJTPARAMETER_LIST = 10;
-  public int JJTNEMP_PARAMETER_LIST = 11;
-  public int JJTSTATEMENT = 12;
+  public int JJTFUNCTIONLIST = 1;
+  public int JJTDECLARATIONLIST = 2;
+  public int JJTVOID = 3;
+  public int JJTVARDECL = 4;
+  public int JJTCONSTDECL = 5;
+  public int JJTFUNCTION = 6;
+  public int JJTSTATEMENT_BLOCK = 7;
+  public int JJTRETURN = 8;
+  public int JJTPARAMETER_LIST = 9;
+  public int JJTPARAMETER = 10;
+  public int JJTSTATEMENT = 11;
+  public int JJTCONDITION = 12;
   public int JJTMINUS_SIGN = 13;
-  public int JJTBINARY_ARITH_OP = 14;
-  public int JJTEXP = 15;
-  public int JJTCONDITION = 16;
-  public int JJTNOT_OP = 17;
-  public int JJTBINARY_LOGICAL_OP = 18;
-  public int JJTCOMPARISON_OP = 19;
-  public int JJTARG_LIST = 20;
-  public int JJTNEMP_ARG_LIST = 21;
-  public int JJTASSIGNMENT_STRUCTURE = 22;
-  public int JJTFUNCTION_CALL_STRUCTURE = 23;
-  public int JJTSTATEMENT_BEGIN_STRUCTURE = 24;
-  public int JJTNUMBER = 25;
-  public int JJTIDENTIFIER = 26;
-  public int JJTANYTYPE = 27;
-  public int JJTTYPEINTEGER = 28;
-  public int JJTTYPEBOOLEAN = 29;
-  public int JJTMAIN = 30;
+  public int JJTEXP = 14;
+  public int JJTADD_OP = 15;
+  public int JJTMINUS_OP = 16;
+  public int JJTMULT_OP = 17;
+  public int JJTDIV_OP = 18;
+  public int JJTBRACKET_EXPRESSION = 19;
+  public int JJTNOT_OP = 20;
+  public int JJTLOGICAL_CONJUNCTION = 21;
+  public int JJTLOGICAL_DISJUNCTION = 22;
+  public int JJTBRACKET_CONDITION = 23;
+  public int JJTEQUALS = 24;
+  public int JJTNOT_EQUALS = 25;
+  public int JJTLESS_THAN = 26;
+  public int JJTLESS_THAN_OR_EQUAL = 27;
+  public int JJTGREATER_THAN = 28;
+  public int JJTGREATER_THAN_OR_EQUAL = 29;
+  public int JJTARG_LIST = 30;
+  public int JJTNEMP_ARG_LIST = 31;
+  public int JJTASSIGNMENT_STRUCTURE = 32;
+  public int JJTFUNCTION_CALL_STRUCTURE = 33;
+  public int JJTSTATEMENT_BEGIN_STRUCTURE = 34;
+  public int JJTNUMBER = 35;
+  public int JJTIDENTIFIER = 36;
+  public int JJTTYPE = 37;
+  public int JJTMAIN = 38;
 
 
   public String[] jjtNodeName = {
-    "program",
-    "Function_list",
-    "Dec_list",
-    "Decl",
+    "Program",
+    "FunctionList",
+    "DeclarationList",
     "void",
-    "Var_decl",
-    "Const_decl",
+    "VarDecl",
+    "ConstDecl",
     "Function",
     "Statement_block",
     "Return",
     "Parameter_list",
-    "Nemp_parameter_list",
+    "Parameter",
     "Statement",
-    "Minus_sign",
-    "Binary_arith_op",
-    "Exp",
     "Condition",
+    "Minus_sign",
+    "Exp",
+    "Add_Op",
+    "Minus_Op",
+    "Mult_Op",
+    "Div_Op",
+    "Bracket_Expression",
     "Not_op",
-    "Binary_logical_op",
-    "Comparison_op",
+    "Logical_Conjunction",
+    "Logical_Disjunction",
+    "Bracket_Condition",
+    "Equals",
+    "Not_Equals",
+    "Less_Than",
+    "Less_Than_Or_Equal",
+    "Greater_Than",
+    "Greater_Than_Or_Equal",
     "Arg_list",
     "Nemp_arg_list",
     "Assignment_structure",
     "Function_call_structure",
-    "Statement_begin_structure",
-    "number",
-    "identifier",
-    "anyType",
-    "typeInteger",
-    "typeBoolean",
+    "Statement_Begin_Structure",
+    "Number",
+    "Identifier",
+    "Type",
     "Main",
   };
 }
-/* JavaCC - OriginalChecksum=0b222d0418d9e878b9ef6b5d9b5e8189 (do not edit this line) */
+/* JavaCC - OriginalChecksum=5731ca5299d2af07efb6f48be799449e (do not edit this line) */

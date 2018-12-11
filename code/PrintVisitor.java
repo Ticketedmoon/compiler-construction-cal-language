@@ -10,18 +10,19 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		throw new RuntimeException("Visit SimpleNode");
     }
 
-    public Object visit(ASTprogram node, Object data) {
+    public Object visit(ASTProgram node, Object data) {
 		for(int i = 0; i < node.jjtGetNumChildren(); i++)
     		node.jjtGetChild(i).jjtAccept(this, data);
 		return data;
     }
     
-	public Object visit(ASTDecl node, Object data) {
-		node.jjtGetChild(0).jjtAccept(this, data);
+    public Object visit(ASTDeclarationList node, Object data) {
+		for(int i = 0; i < node.jjtGetNumChildren(); i++)
+    		node.jjtGetChild(i).jjtAccept(this, data);
 		return data;
     }
-
-    public Object visit(ASTVar_decl node, Object data) {	
+    
+    public Object visit(ASTVarDecl node, Object data) {	
 		System.out.print("variable ");
 		node.jjtGetChild(0).jjtAccept(this, data);
 		System.out.print(" : ");
@@ -30,11 +31,12 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		return data;
     }
 
-	public Object visit(ASTConst_decl node, Object data) {
+	public Object visit(ASTConstDecl node, Object data) {
         System.out.print("constant ");
         node.jjtGetChild(0).jjtAccept(this, data);
 		System.out.print(" : ");
         node.jjtGetChild(1).jjtAccept(this, data);	
+		System.out.print(" := ");	
         node.jjtGetChild(2).jjtAccept(this, data);
 		System.out.println(";");
         return data;
@@ -63,34 +65,17 @@ public class PrintVisitor implements AssignmentTwoVisitor
         return data;
     }
     
-    public Object visit(ASTStatement_block node, Object data) {		
-		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
-			System.out.print("        ");
-    		node.jjtGetChild(i).jjtAccept(this, data);
-		}
-		return data;
-    }
-
     public Object visit(ASTStatement node, Object data) {		
 		if (node.value != null)
 			System.out.print(node.value + " ");
-		node.jjtGetChild(0).jjtAccept(this, data);
-		node.jjtGetChild(1).jjtAccept(this, data);
-		System.out.println(";");
+		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
+    		node.jjtGetChild(i).jjtAccept(this, data);
+		}
+		System.out.println();
 		return data;
     }
 
-    public Object visit(ASTanyType node, Object data) {		
-		System.out.print(node.value);
-		return data;
-    }
-
-    public Object visit(ASTtypeInteger node, Object data) {		
-		System.out.print(node.value);
-		return data;
-    }
-
-    public Object visit(ASTtypeBoolean node, Object data) {		
+    public Object visit(ASTType node, Object data) {		
 		System.out.print(node.value);
 		return data;
     }
@@ -98,12 +83,23 @@ public class PrintVisitor implements AssignmentTwoVisitor
     public Object visit(ASTAssignment_structure node, Object data) {		
 		System.out.print(" := ");
 		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print(";");
 		return data;
     }
 
-    public Object visit(ASTStatement_begin_structure node, Object data) {		
-		System.out.print("begin");
-		node.jjtGetChild(0).jjtAccept(this, data);
+	
+    public Object visit(ASTStatement_block node, Object data) {		
+		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
+    		node.jjtGetChild(i).jjtAccept(this, data);
+		}
+		return data;
+    }
+
+    public Object visit(ASTStatement_Begin_Structure node, Object data) {		
+		System.out.println("\nbegin");
+		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
+    		node.jjtGetChild(i).jjtAccept(this, data);
+		}
 		System.out.print("end");
 		return data;
     }
@@ -113,7 +109,7 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		return data;
     }
 
-    public Object visit(ASTNemp_parameter_list node, Object data) {
+    public Object visit(ASTParameter node, Object data) {
     	node.jjtGetChild(0).jjtAccept(this, data);
 		System.out.print(": ");
     	node.jjtGetChild(1).jjtAccept(this, data);
@@ -125,13 +121,7 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		return data;
     }
 
-    public Object visit(ASTFunction_list node, Object data) {
-		for(int i = 0; i < node.jjtGetNumChildren(); i++)
-    		node.jjtGetChild(i).jjtAccept(this, data);
-		return data;
-    }
-
-	public Object visit(ASTDec_list node, Object data) {
+    public Object visit(ASTFunctionList node, Object data) {
 		for(int i = 0; i < node.jjtGetNumChildren(); i++)
     		node.jjtGetChild(i).jjtAccept(this, data);
 		return data;
@@ -160,14 +150,42 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		return data;
     }
 
-    public Object visit(ASTBinary_arith_op node, Object data) {
+    public Object visit(ASTAdd_Op node, Object data) {
 		node.jjtGetChild(0).jjtAccept(this, data);
 		System.out.print(" " + node.value + " ");
 		node.jjtGetChild(1).jjtAccept(this, data);
 		return data;
     }
 
-    public Object visit(ASTBinary_logical_op node, Object data) {
+    public Object visit(ASTMinus_Op node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print(" " + node.value + " ");
+		node.jjtGetChild(1).jjtAccept(this, data);
+		return data;
+    }
+
+    public Object visit(ASTMult_Op node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print(" " + node.value + " ");
+		node.jjtGetChild(1).jjtAccept(this, data);
+		return data;
+    }
+
+    public Object visit(ASTDiv_Op node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print(" " + node.value + " ");
+		node.jjtGetChild(1).jjtAccept(this, data);
+		return data;
+    }
+
+    public Object visit(ASTLogical_Conjunction node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this,data);
+		System.out.print(" " + node.value + " ");
+		node.jjtGetChild(1).jjtAccept(this, data);
+		return data;
+    }
+
+    public Object visit(ASTLogical_Disjunction node, Object data) {
 		node.jjtGetChild(0).jjtAccept(this,data);
 		System.out.print(" " + node.value + " ");
 		node.jjtGetChild(1).jjtAccept(this, data);
@@ -180,7 +198,42 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		return data;
     }
 
-    public Object visit(ASTComparison_op node, Object data) {
+    public Object visit(ASTEquals node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print(" " + node.value + " ");
+		node.jjtGetChild(1).jjtAccept(this, data);
+		return data;
+    }
+
+    public Object visit(ASTNot_Equals node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print(" " + node.value + " ");
+		node.jjtGetChild(1).jjtAccept(this, data);
+		return data;
+    }
+
+    public Object visit(ASTLess_Than node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print(" " + node.value + " ");
+		node.jjtGetChild(1).jjtAccept(this, data);
+		return data;
+    }
+
+    public Object visit(ASTLess_Than_Or_Equal node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print(" " + node.value + " ");
+		node.jjtGetChild(1).jjtAccept(this, data);
+		return data;
+    }
+
+    public Object visit(ASTGreater_Than node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print(" " + node.value + " ");
+		node.jjtGetChild(1).jjtAccept(this, data);
+		return data;
+    }
+
+    public Object visit(ASTGreater_Than_Or_Equal node, Object data) {
 		node.jjtGetChild(0).jjtAccept(this, data);
 		System.out.print(" " + node.value + " ");
 		node.jjtGetChild(1).jjtAccept(this, data);
@@ -200,6 +253,18 @@ public class PrintVisitor implements AssignmentTwoVisitor
     }
 
     public Object visit(ASTCondition node, Object data) {
+		node.jjtGetChild(0).jjtAccept(this, data);
+		return(data);
+    }
+
+    public Object visit(ASTBracket_Condition node, Object data) {
+		System.out.print("(");
+		node.jjtGetChild(0).jjtAccept(this, data);
+		System.out.print(")");
+		return(data);
+    }
+
+    public Object visit(ASTBracket_Expression node, Object data) {
 		System.out.print("(");
 		node.jjtGetChild(0).jjtAccept(this, data);
 		System.out.print(")");
@@ -212,7 +277,7 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		return(data);
     }
 
-    public Object visit(ASTidentifier node, Object data) {
+    public Object visit(ASTIdentifier node, Object data) {
 		System.out.print(node.value);
 		return data;
     }
@@ -223,7 +288,7 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		return data;
     }
 
-    public Object visit(ASTnumber node, Object data) {
+    public Object visit(ASTNumber node, Object data) {
 		System.out.print(node.value);
 		return data;
     }
