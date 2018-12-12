@@ -1,6 +1,7 @@
 integer hello(x : integer, y: boolean) is
 	variable i : integer;
-	variable j : boolean;
+	variable j : boolean;	
+	constant x : integer := true;
 	begin
 		if (j = (i * 3) | j = 5 & (x = 5 | y = 2))
 		begin

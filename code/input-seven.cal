@@ -1,12 +1,6 @@
 variable x: integer;
 variable y: boolean;
-constant val: integer := 5;
-
-integer test_fn() is
-	variable a: integer;
-	begin
-		return ();
-	end
+constant val: integer := hello;
 
 main
 	begin

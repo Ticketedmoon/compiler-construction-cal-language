@@ -45,10 +45,10 @@ PARSER_BEGIN(AssignmentTwo)
 				System.out.println("Symbol Table:");
 				ST.print();
 
-				System.out.println();
+				/* System.out.println();
 				System.out.println("Program:");
 				PrintVisitor pv = new PrintVisitor();
-				root.jjtAccept(pv, null);
+				root.jjtAccept(pv, null); */
 
 				System.out.println();
 				System.out.println("Type Checking:");
