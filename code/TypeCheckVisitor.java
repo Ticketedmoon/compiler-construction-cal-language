@@ -106,102 +106,102 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	}
 
 	public Object visit(ASTStatement node, Object data) {
-    if(node.jjtGetNumChildren() > 0) {
-        String id = (String)node.jjtGetChild(0).jjtAccept(this, data);
+		if(node.jjtGetNumChildren() > 0) {
+			String id = (String)node.jjtGetChild(0).jjtAccept(this, data);
         
-		// functions with no previous statement contain func name as id
-        if(ST.isFunction(id)) {
-            invokedFunctions.add(id);
-        }
+			// functions with no previous statement contain func name as id
+			if(ST.isFunction(id)) {
+            	invokedFunctions.add(id);
+        	}
 
-        if(isDeclared(id, scope)) {
-            String type = ST.getType(id, scope);
-            String description = ST.getDescription(id, scope);
-            if(description.equals("const")) {
-                System.out.println("Error: " + id + " is a constant and cannot be redeclared");
-            }
-            else {
-            String rhs = node.jjtGetChild(1).toString();
-            if(type.equals("integer")) {
-                if(rhs.equals("Num"))
-                {
-                    node.jjtGetChild(1).jjtAccept(this, data);
-                }
-                else if(rhs.equals("BoolOp")) {
-                    System.out.println("Error: Expected type integer instead got boolean");
-                }
-                else if(rhs.equals("FuncReturn")) {
-                    String func_name = (String) node.jjtGetChild(1).jjtAccept(this, data);
-                    // check if function is declared in global scope
-                    if(!isDeclared(func_name, "global") && !isDeclared(func_name, scope)) {
-                        System.out.println("Error: " + func_name + " is not declared");
-                    }     
-                    else if(ST.isFunction(func_name)) {
-                        invokedFunctions.add(func_name);
-                        // get return type of function
-                        String func_return = ST.getType(func_name, "global");
-                        if(!func_return.equals("integer")) {
-                            System.out.println("Error: Expected return type of integer instead got " + func_return);
-                        }
+        	if(isDeclared(id, scope)) {
+            	String type = ST.getType(id, scope);
+            	String description = ST.getDescription(id, scope);
+            	if(description.equals("const")) {
+                	System.out.println("Error: " + id + " is a constant and cannot be redeclared");
+            	}
+            	else {
+            		String rhs = node.jjtGetChild(1).toString();
+            		if(type.equals("integer")) {
+                		if(rhs.equals("Num"))
+                		{
+                    		node.jjtGetChild(1).jjtAccept(this, data);
+                		}
+                		else if(rhs.equals("BoolOp")) {
+                    		System.out.println("Error: Expected type integer instead got boolean");
+                		}
+                		else if(rhs.equals("FuncReturn")) {
+                    		String func_name = (String) node.jjtGetChild(1).jjtAccept(this, data);
+                    		// check if function is declared in global scope
+                    		if(!isDeclared(func_name, "global") && !isDeclared(func_name, scope)) {
+                        		System.out.println("Error: " + func_name + " is not declared");
+                    		}     
+                    		else if(ST.isFunction(func_name)) {
+                        		invokedFunctions.add(func_name);
+                        		// get return type of function
+                        		String func_return = ST.getType(func_name, "global");
+                        		if(!func_return.equals("integer")) {
+                            		System.out.println("Error: Expected return type of integer instead got " + func_return);
+                        		}
                 
-                    int num_args = ST.getParams(func_name);
-                    // Statement -> FuncReturn -> ArgList -> children of arglist
-                    int actual_args = node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren();
-                    // check that the correct number of args is used
-                    if(num_args != actual_args) 
-                        System.out.println("Error: Expected " + num_args + " parameters instead got " + actual_args);
-                    else if(num_args == actual_args) {
-                        // check that the arguments are of the correct type
-                        Node arg_list = node.jjtGetChild(1).jjtGetChild(0);
-                        for(int i = 0; i < arg_list.jjtGetNumChildren(); i++) {
-                            String arg  = (String)arg_list.jjtGetChild(i).jjtAccept(this, data);
-                            // check if argument in arglist is actually declared 
-                            if(isDeclared(arg, scope)) {
-                                String arg_type = ST.getType(arg, scope);
-                                String type_expected = ST.getParamType(i+1, func_name);
-                                if(!arg_type.equals(type_expected)) {
-                                    System.out.println("Error: " + arg + " is of type " + arg_type + " expected type of " + type_expected);
-                                }
-                            }
-                            else {
-                                System.out.println("Error: " + arg + " is not declared in this scope");
-                            }
-                        }
-                    }
-                    }
-                }
-            }
-            else if(type.equals("boolean")) {
-              if(rhs.equals("BoolOp"))
-                {
-                    node.jjtGetChild(1).jjtAccept(this, data);
-                }
-                else if(rhs.equals("Num")) {
-                    System.out.println("Error: Expected type boolean instead got integer");
-                }
-                else if(rhs.equals("FuncReturn")) {
-                    String func_name = (String) node.jjtGetChild(1).jjtAccept(this, data);
-                    // check if function is declared in global scope
-                    if(!isDeclared(func_name, "global")) {
-                        System.out.println(func_name + " is not declared");
-                    }
-                    else {
-                        // get return type of function
-                        String func_return = ST.getType(func_name, "global");
-                        if(!func_return.equals("boolean")) {
-                            System.out.println("Error: Expected return type of boolean instead got " + func_return);
-                        }
-                    }
-                }
-            }
-            }
-        }
-        else if(!isDeclared(id, scope)) {
-            System.out.println("Error: Token with ID (" + id + ") needs to be declared before use");
-        }
-        }
+                    			int num_args = ST.getParams(func_name);
+                    			// Statement -> FuncReturn -> ArgList -> children of arglist
+                    			int actual_args = node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren();
+                    			// check that the correct number of args is used
+                    			if(num_args != actual_args) 
+                        			System.out.println("Error: Expected " + num_args + " parameters instead got " + actual_args);
+                    			else if(num_args == actual_args) {
+                        			// check that the arguments are of the correct type
+                        			Node arg_list = node.jjtGetChild(1).jjtGetChild(0);
+                        			for(int i = 0; i < arg_list.jjtGetNumChildren(); i++) {
+                            			String arg  = (String)arg_list.jjtGetChild(i).jjtAccept(this, data);
+                            			// check if argument in arglist is actually declared 
+                            			if(isDeclared(arg, scope)) {
+                                			String arg_type = ST.getType(arg, scope);
+                                			String type_expected = ST.getParamType(i+1, func_name);
+                                			if(!arg_type.equals(type_expected)) {
+                                    			System.out.println("Error: " + arg + " is of type " + arg_type + " expected type of " + type_expected);
+                                			}
+                            			}
+                            			else {
+                                			System.out.println("Error: " + arg + " is not declared in this scope");
+                            			}
+                        			}
+                    			}
+							}
+                		}
+            		}
+            	else if(type.equals("boolean")) {
+              		if(rhs.equals("BoolOp"))
+                	{
+                    	node.jjtGetChild(1).jjtAccept(this, data);
+                	}
+                	else if(rhs.equals("Num")) {
+                    	System.out.println("Error: Expected type boolean instead got integer");
+                	}
+                	else if(rhs.equals("FuncReturn")) {
+                    	String func_name = (String) node.jjtGetChild(1).jjtAccept(this, data);
+                    	// check if function is declared in global scope
+                    	if(!isDeclared(func_name, "global")) {
+                        	System.out.println(func_name + " is not declared");
+                    	}
+                    	else {
+                        	// get return type of function
+                        	String func_return = ST.getType(func_name, "global");
+                        	if(!func_return.equals("boolean")) {
+                            	System.out.println("Error: Expected return type of boolean instead got " + func_return);
+                        	}
+                    	}
+                	}
+            	}
+        		}
+        	}
+        	else if(!isDeclared(id, scope)) {
+            	System.out.println("Error: Token with ID (" + id + ") needs to be declared before use");
+        	}
+		}
     return data;    
-  }	
+	}	
 
 	public Object visit(ASTFunctionList node, Object data) {
 		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
