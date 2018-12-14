@@ -1,6 +1,14 @@
 variable x: integer;
 variable y: boolean;
-constant val: integer := hello;
+constant val: integer := welcome;
+
+integer getMax(x: integer) is
+variable z: integer;
+begin
+	x := (5 + 28) + y;
+	return ();
+end
+	
 
 main
 	begin

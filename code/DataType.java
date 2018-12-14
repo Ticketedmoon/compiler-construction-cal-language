@@ -1,14 +1,26 @@
-// Name:DataType.java
-// Author: David Sinclair      Date: 29 Aug 2012
-//
-
-
 public enum DataType
 {
+	// Program level 
     Program,
+
+	// Function Data - Main included
 	Function,
-    Declaration,
+	FunctionReturn,
+	Main,
+
+	// Declarations of both Var/Const types.
+    VariableDeclaration,
+	ConstantDeclaration,
+
+	// Expressional Data / Statements
+	ParameterList,
+	Statement,
+	Assignment,
+	Expression,
+
+	// Lowest Level types
     TypeUnknown,
     TypeInteger,
-    TypeBoolean
+    TypeBoolean,
+	TypeIdentifier
 }
