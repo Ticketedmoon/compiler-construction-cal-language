@@ -258,12 +258,8 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	}
 
 	public Object visit(ASTExp node, Object data) {
-		int num = node.jjtGetNumChildren();
-		for(int i = 0; i < num; i++) {
-        	node.jjtGetChild(i).jjtAccept(this, data);
-    	}
 		return node.jjtGetChild(0).jjtAccept(this, data);
-		//return DataType.Expression;
+		// return DataType.Expression;
 	}
 
 	public Object visit(ASTBracket_Expression node, Object data) {

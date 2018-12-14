@@ -5,7 +5,8 @@ constant val: integer := welcome;
 integer getMax(x: integer) is
 variable z: integer;
 begin
-	x := (5 + 28) + y;
+	x := (5 + 28) + y + z;
+	p := 5;
 	return ();
 end
 	
