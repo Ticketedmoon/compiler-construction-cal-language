@@ -309,20 +309,8 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 		return DataType.TypeUnknown;
 	}
 
-	public Object visit(ASTNot_op node, Object data) {
-		if ((DataType)node.jjtGetChild(0).jjtAccept(this, data) != DataType.TypeBoolean)
-			return DataType.TypeUnknown;
-		else
-			return DataType.TypeBoolean;
-	}
-
 	public Object visit(ASTExp node, Object data) {
 		return node.jjtGetChild(0).jjtAccept(this, data);
-	}
-
-	public Object visit(ASTBracket_Expression node, Object data) {
-		node.jjtGetChild(0).jjtAccept(this, data);
-		return data;
 	}
 
 	public Object visit(ASTEquals node, Object data) {
@@ -348,25 +336,28 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 		// Statement followed by
 		// Exp followed by 
 		// Arglist -> Nemp_arg_list -> count children
-		int actual_args = node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren();
-		// check that the correct number of args is used
-		if(num_args != actual_args) 
-			System.out.println("Error: Expected " + num_args + " parameters instead got " + actual_args);
-		else if(num_args == actual_args) {
-			// check that the arguments are of the correct type
-			Node arg_list = node.jjtGetChild(1).jjtGetChild(0);
-			for(int i = 0; i < arg_list.jjtGetNumChildren(); i++) {
-				String arg  = (String)arg_list.jjtGetChild(i).jjtAccept(this, data);
-				// check if argument in arglist is actually declared 
-				if(isDeclared(arg, scope)) {
-					String arg_type = ST.getType(arg, scope);
-					String type_expected = ST.getParamType(i+1, func_name);
-					if(!arg_type.equals(type_expected)) {
-						System.out.println("Error: " + arg + " is of type " + arg_type + " expected type of " + type_expected);
+		boolean nonEmptyParamList = (node.jjtGetChild(1).jjtGetChild(1).jjtGetNumChildren()) > 0;
+		if (nonEmptyParamList) {
+			int actual_args = node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren();
+			// check that the correct number of args is used
+			if(num_args != actual_args) 
+				System.out.println("Error: Expected " + num_args + " parameters instead got " + actual_args);
+			else if(num_args == actual_args) {
+				// check that the arguments are of the correct type
+				Node arg_list = node.jjtGetChild(1).jjtGetChild(0);
+				for(int i = 0; i < arg_list.jjtGetNumChildren(); i++) {
+					String arg  = (String)arg_list.jjtGetChild(i).jjtAccept(this, data);
+					// check if argument in arglist is actually declared 
+					if(isDeclared(arg, scope)) {
+						String arg_type = ST.getType(arg, scope);
+						String type_expected = ST.getParamType(i+1, func_name);
+						if(!arg_type.equals(type_expected)) {
+							System.out.println("Error: " + arg + " is of type " + arg_type + " expected type of " + type_expected);
+						}
 					}
-				}
-				else {
-					System.out.println("Error: " + arg + " is not declared in this scope");
+					else {
+						System.out.println("Error: " + arg + " is not declared in this scope");
+					}
 				}
 			}
 		}
@@ -395,16 +386,6 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	}
 
 	public Object visit(ASTGreater_Than_Or_Equal node, Object data) {
-		node.jjtGetChild(0).jjtAccept(this, data);
-		return data;
-	}
-
-	public Object visit(ASTSimple_condition node, Object data) {
-		node.jjtGetChild(0).jjtAccept(this, data);
-		return data;
-	}
-
-	public Object visit(ASTsimple_special_expression node, Object data) {
 		node.jjtGetChild(0).jjtAccept(this, data);
 		return data;
 	}

@@ -30,5 +30,5 @@ main
 		variable a: boolean;
 		q := true;
 		x := getMax(q);
-		y := test_fun(a);
+		x := test_fn();
 	end

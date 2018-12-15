@@ -28,11 +28,6 @@
     System.out.println("Symbol Table:\n");
     ST.print();
 
-    /* System.out.println();
-				System.out.println("Program:");
-				PrintVisitor pv = new PrintVisitor();
-				root.jjtAccept(pv, null); */
-
     System.out.println();
     System.out.println("Type Checking:");
     TypeCheckVisitor tc = new TypeCheckVisitor();
