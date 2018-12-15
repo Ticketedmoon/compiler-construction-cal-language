@@ -17,23 +17,22 @@ public interface AssignmentTwoTreeConstants
   public int JJTBOOLEAN = 13;
   public int JJTEXP = 14;
   public int JJTADD_OP = 15;
-  public int JJTMINUS_OP = 16;
-  public int JJTLOGICAL_CONJUNCTION = 17;
-  public int JJTLOGICAL_DISJUNCTION = 18;
-  public int JJTEQUALS = 19;
-  public int JJTNOT_EQUALS = 20;
-  public int JJTLESS_THAN = 21;
-  public int JJTLESS_THAN_OR_EQUAL = 22;
-  public int JJTGREATER_THAN = 23;
-  public int JJTGREATER_THAN_OR_EQUAL = 24;
-  public int JJTARG_LIST = 25;
-  public int JJTNEMP_ARG_LIST = 26;
-  public int JJTFUNCTION_CALL_STRUCTURE = 27;
-  public int JJTSTATEMENT_BEGIN_STRUCTURE = 28;
-  public int JJTNUMBER = 29;
-  public int JJTIDENTIFIER = 30;
-  public int JJTTYPE = 31;
-  public int JJTMAIN = 32;
+  public int JJTLOGICAL_CONJUNCTION = 16;
+  public int JJTLOGICAL_DISJUNCTION = 17;
+  public int JJTEQUALS = 18;
+  public int JJTNOT_EQUALS = 19;
+  public int JJTLESS_THAN = 20;
+  public int JJTLESS_THAN_OR_EQUAL = 21;
+  public int JJTGREATER_THAN = 22;
+  public int JJTGREATER_THAN_OR_EQUAL = 23;
+  public int JJTARG_LIST = 24;
+  public int JJTNEMP_ARG_LIST = 25;
+  public int JJTFUNCTION_CALL_STRUCTURE = 26;
+  public int JJTSTATEMENT_BEGIN_STRUCTURE = 27;
+  public int JJTNUMBER = 28;
+  public int JJTIDENTIFIER = 29;
+  public int JJTTYPE = 30;
+  public int JJTMAIN = 31;
 
 
   public String[] jjtNodeName = {
@@ -53,7 +52,6 @@ public interface AssignmentTwoTreeConstants
     "Boolean",
     "Exp",
     "Add_Op",
-    "Minus_Op",
     "Logical_Conjunction",
     "Logical_Disjunction",
     "Equals",
@@ -72,4 +70,4 @@ public interface AssignmentTwoTreeConstants
     "Main",
   };
 }
-/* JavaCC - OriginalChecksum=d9055e6fb2a9984c193050a129c09c29 (do not edit this line) */
+/* JavaCC - OriginalChecksum=20f648ed9b4aeab17f21ae8bc31bf249 (do not edit this line) */

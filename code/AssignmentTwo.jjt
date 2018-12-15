@@ -202,21 +202,20 @@ void function():
         }
 		// Set new scope here for function.
      	scope = ID;
-	})
+	}
 	<LBRACE> parameter_list() <RBRACE> <IS>
 	[DeclarationList()]
 	<BEGIN>
-		(statement_block() #Statement_block)
-		function_return()
-	<END>
+		statement_block() #Statement_block
+	    function_return() #Return
+	<END>)
+	{scope = "global";}
 }
 
-void function_return():
-{}
+void function_return() : {Token t;}
 {
-	((<RETURN> <LBRACE> [expression()] <RBRACE> <SEMICOLON>) #Return)
+    <RETURN> (<LBRACE> [expression()] <RBRACE>) <SEMICOLON> 
 }
-
 
 // Defines parameter list.
 // Either is a non-empty parameter list or an empty one (0 or 1)
@@ -246,7 +245,7 @@ void statement_block():
 void statement() #Statement:
 {Token t;}
 {
-	Identifier() (assignment_structure() | function_call_structure())
+	Identifier() (assignment_structure() | <LBRACE> function_call_structure())
 	| statement_begin_structure()
 	|  (t = <IF> condition() statement_begin_structure() {jjtThis.value = t.image;})
 	|  (t = <ELSE> statement_begin_structure() {jjtThis.value = t.image;})
@@ -260,7 +259,7 @@ void statement() #Statement:
 void fragment():
 {Token t;}
 {
-    <MINUS> Identifier() #Minus_sign
+    (<MINUS> Identifier() #Minus_sign)
 	| t = <TRUE> {jjtThis.value = t.image;} #Boolean
 	| t = <FALSE> {jjtThis.value = t.image;} #Boolean
     | Number() 
@@ -275,7 +274,7 @@ void expression() #Exp:
     simple_expression() 
 	[
 		t = <PLUS> expression()   {jjtThis.value = t.image;} #Add_Op(2)
-	| 	t = <MINUS> expression()  {jjtThis.value = t.image;} #Minus_Op(2)
+	| 	t = <MINUS> expression()  {jjtThis.value = t.image;} #Add_Op(2)
 	]
 }
 
@@ -331,7 +330,7 @@ void special_expression():
     simple_special_expression() 
 	[
 		t = <PLUS> special_expression()   {jjtThis.value = t.image;} #Add_Op(2)
-	| 	t = <MINUS> special_expression()  {jjtThis.value = t.image;} #Minus_Op(2)
+	| 	t = <MINUS> special_expression()  {jjtThis.value = t.image;} #Add_Op(2)
 	]
 }
 
@@ -344,17 +343,17 @@ void simple_special_expression() #Exp:
 }
 
 // Argument list is 0 or 1 non-empty argument lists.
+// Non-empty argument list, is a list of IDs with COMMAs separating them.
 void arg_list() #Arg_list:
 {}
 {
     [nemp_arg_list() #Nemp_arg_list]
 }
 
-// Non-empty argument list, is a list of IDs with COMMAs separating them.
 void nemp_arg_list():
 {}
 {
-    Identifier() [<COMMA> nemp_arg_list()]
+    Identifier() [<COMMA> arg_list()]
 }
 
 // Structure to assignments 
@@ -368,7 +367,7 @@ void assignment_structure():
 void function_call_structure() #Function_call_structure:
 {}
 {
-  <LBRACE> arg_list() <RBRACE> <SEMICOLON>
+	arg_list() <RBRACE> <SEMICOLON>
 }
 
 // Structure to statements

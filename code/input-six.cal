@@ -3,9 +3,9 @@ integer hello(x : integer, y: boolean) is
 	variable j : boolean;	
 	constant x : integer := asd;
 	begin
-		if (j = (i + 3) | j = 5 & (x = 5 | y = 2))
+		if (j = (i + 3) | j = true & (x = 5 | x = 2))
 		begin
-			i := i - 3;
+			i := i - 5;
 		end
 		return ();
 	end

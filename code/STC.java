@@ -90,7 +90,7 @@ public class STC extends Object
         return false;
     }
 
-    public ArrayList<String> functionsToList() {
+    public ArrayList<String> getFunctionList() {
         LinkedList<String> list = symbolTable.get("global");
         ArrayList<String> functions = new ArrayList<String>();
         for(int i = 0; i < list.size(); i++) {
@@ -115,11 +115,11 @@ public class STC extends Object
 
 	public String getParamType(int index, String scope) {
         int count = 0;
-        LinkedList<String> idList = symbolTable.get(scope);
-            for(String id : idList) {
+        LinkedList<String> identifiers = symbolTable.get(scope);
+            for(String id : identifiers) {
                 String type = typeTable.get(id + "/" + scope);
                 String description = descriptionTable.get(id + "/" + scope);
-                if(description.equals("param")) {
+                if(description.equals("parameter")) {
                     count++;
                     if(count == index) {
                         return type;
@@ -143,10 +143,8 @@ public class STC extends Object
 	// Check for identical declarations in global / current scope.
 	public boolean hasNoIdenticalDeclarations(String id, String scope) {
 		LinkedList<String> current = this.symbolTable.get(scope);
-		
 		// Check if the id has only occured once in the current scope
 		return ((current.indexOf(id) == current.lastIndexOf(id)));
-
 	}
 
 }

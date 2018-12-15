@@ -11,14 +11,14 @@ variable z: boolean;
 variable p: boolean;
 begin
 	x := (5 + x + 5 - tmp + j) + true;
-	if (y & 40 & p) & (y & z) & p
+	if (y & true & false) & (y & z) & p
 		begin
 			j := 10;
 		end
 	return (5);
 end
 	
-void test_fn(isOn: boolean) is
+boolean test_fn(isOn: boolean) is
 begin
 	return (isOn);
 end
@@ -28,7 +28,8 @@ main
 		variable q: integer;
 		variable x: integer;
 		variable a: boolean;
-		q := true;
+		variable b: boolean;
+		x := true;
 		x := getMax(q);
-		x := test_fn();
+		a := test_fn(b);
 	end

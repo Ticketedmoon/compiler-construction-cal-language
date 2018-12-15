@@ -52,9 +52,6 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTAdd_Op node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTMinus_Op node, Object data){
-    return defaultVisit(node, data);
-  }
   public Object visit(ASTLogical_Conjunction node, Object data){
     return defaultVisit(node, data);
   }
@@ -104,4 +101,4 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
     return defaultVisit(node, data);
   }
 }
-/* JavaCC - OriginalChecksum=1a4850a69f8ddda0bfe42b1adab19fb8 (do not edit this line) */
+/* JavaCC - OriginalChecksum=b63ab599d3c775f148b3f9afe8eeec80 (do not edit this line) */

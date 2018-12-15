@@ -17,7 +17,6 @@ public interface AssignmentTwoVisitor
   public Object visit(ASTBoolean node, Object data);
   public Object visit(ASTExp node, Object data);
   public Object visit(ASTAdd_Op node, Object data);
-  public Object visit(ASTMinus_Op node, Object data);
   public Object visit(ASTLogical_Conjunction node, Object data);
   public Object visit(ASTLogical_Disjunction node, Object data);
   public Object visit(ASTEquals node, Object data);
@@ -35,4 +34,4 @@ public interface AssignmentTwoVisitor
   public Object visit(ASTType node, Object data);
   public Object visit(ASTMain node, Object data);
 }
-/* JavaCC - OriginalChecksum=979f0b7e4358826f552e6b9c543baf35 (do not edit this line) */
+/* JavaCC - OriginalChecksum=bb05d45e88684f3a9e320c8220931690 (do not edit this line) */
