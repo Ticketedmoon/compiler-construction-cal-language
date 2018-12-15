@@ -233,9 +233,10 @@ void parameter_list() #Parameter_list:
 
 // Non-empty parameter list structure.
 void nemp_parameter_list():
-{}
+{String ID; String type;}
 {
-	Identifier() <COLON> Type() [<COMMA> nemp_parameter_list() #Parameter]
+	ID = Identifier() <COLON> type = Type() [<COMMA> nemp_parameter_list() #Parameter]
+	{ ST.put(ID, type, "parameter", scope); }
 }
 
 // A statement block is simply 0 or more statements.
@@ -252,12 +253,9 @@ void statement() #Statement:
 {
 	Identifier() (assignment_structure() | function_call_structure())
 	| statement_begin_structure()
-	| t = <IF> (condition() #Condition) statement_begin_structure()
-	  {jjtThis.value = t.image;}
-	| t = <ELSE> statement_begin_structure()
-	  {jjtThis.value = t.image;}
-	| t = <WHILE> (condition() #Condition) statement_begin_structure()
-	  {jjtThis.value = t.image;}
+	|  (t = <IF> condition() statement_begin_structure() {jjtThis.value = t.image;})
+	|  (t = <ELSE> statement_begin_structure() {jjtThis.value = t.image;})
+	|  (t = <WHILE> condition() statement_begin_structure() {jjtThis.value = t.image;})
 	| <SKIP_TOKEN> <SEMICOLON>
 }
 
@@ -267,8 +265,10 @@ void statement() #Statement:
 void fragment():
 {Token t;}
 {
-    ((t = <MINUS>) (Identifier()) {jjtThis.value = t.image;} #Minus_sign(1))
-    | Number() | <TRUE> | <FALSE>
+    <MINUS> Identifier() #Minus_sign
+	| t = <TRUE> {jjtThis.value = t.image;} #Boolean
+	| t = <FALSE> {jjtThis.value = t.image;} #Boolean
+    | Number() 
 }
 
 /* Expression can be a simple_expression() followed by 0 or 1 more
@@ -292,7 +292,7 @@ void expression() #Exp:
 void simple_expression():
 {}
 {
-    <LBRACE> (expression() #Bracket_Expression) <RBRACE>
+    <LBRACE> expression() <RBRACE>
     | Identifier() [<LBRACE> arg_list() <RBRACE>]
     | fragment()
 }
@@ -303,11 +303,9 @@ void simple_expression():
 void condition():
 {Token t;}
 {   
-    ((<NOT> simple_condition() #Not_op(1))
-	| simple_condition())
-	[
-		t = <AND> condition() {jjtThis.value = t.image;} #Logical_Conjunction(2)
-	|   t = <OR> condition() {jjtThis.value = t.image;} #Logical_Disjunction(2)
+    (<NOT> simple_condition() | simple_condition())
+	[    t = <AND> condition() {jjtThis.value = t.image;} #Logical_Conjunction(2)
+	   | t = <OR> condition() {jjtThis.value = t.image;} #Logical_Disjunction(2)
 	]
 }
 
@@ -320,15 +318,15 @@ void condition():
 void simple_condition():
 {Token t;}
 {   
-    <LBRACE> (condition() #Bracket_Condition)<RBRACE>
+    <LBRACE> condition() <RBRACE>
     | special_expression() 
-	(	t = <EQUALS>  expression() {jjtThis.value = t.image;} #Equals(2)
+	[	t = <EQUALS>  expression() {jjtThis.value = t.image;} #Equals(2)
 	| 	t = <NOT_EQUALS>  expression() {jjtThis.value = t.image;} #Not_Equals(2)
 	| 	t = <LESS_THAN>  expression() {jjtThis.value = t.image;} #Less_Than(2)
 	| 	t = <LESS_THAN_OR_EQUAL>  expression() {jjtThis.value = t.image;} #Less_Than_Or_Equal(2)
 	| 	t = <GREATER_THAN>  expression() {jjtThis.value = t.image;} #Greater_Than(2)
 	| 	t = <GREATER_THAN_OR_EQUAL> expression() {jjtThis.value = t.image;} #Greater_Than_Or_Equal(2)
-	) 
+	] 
 }
 
 // Special Expression structure - similar to expression / condition.
@@ -365,7 +363,7 @@ void nemp_arg_list():
 }
 
 // Structure to assignments 
-void assignment_structure() #Assignment_structure:
+void assignment_structure():
 {}
 {
   <ASSIGNMENT> expression() <SEMICOLON>
@@ -412,9 +410,12 @@ String Type() #Type:
 void Main() #Main:
 {}
 {
-	<MAIN>
-		<BEGIN> 
-			[DeclarationList()] 
-			(statement_block() #Statement_block) 
-		<END>
+	{scope = "main";}
+	(
+		<MAIN>
+			<BEGIN> 
+				[DeclarationList()] 
+				(statement_block() #Statement_block) 
+			<END>
+	)
 }

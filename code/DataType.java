@@ -22,5 +22,5 @@ public enum DataType
     TypeUnknown,
     TypeInteger,
     TypeBoolean,
-	TypeIdentifier
+	TypeIdentifier,
 }

@@ -1,27 +1,23 @@
-// Name:TypeCheckVisitor.java
-// Author: David Sinclair      Date: 29 Aug 2012
-//
-// Visitor for basic type checking expressions in an abstract syntax tree in the ExprLang language
-//
-
 import java.util.*;
 
 public class TypeCheckVisitor implements AssignmentTwoVisitor
 {
+	// Scope and Symbol Table declarations.
 	private static String scope = "global";
 	private static STC ST;
-	private static HashSet<String> invokedFunctions = new HashSet<>();
+
+	// function calls / same declaration ID overlap sets.
+	private static HashSet<String> functionCalls = new HashSet<>();
+	private static Hashtable<String, LinkedHashSet<String>> identicalDeclarations = new Hashtable<>();
 	
 	private static boolean isDeclared(String id, String scope) {
 		// Get the declarations in the scope currently active in the program.
 		LinkedList<String> list = ST.get(scope);
 
-		// Get the globa scope declarations
+		// Get the global scope declarations
 		LinkedList<String> global_list = ST.get("global");
-		if(list != null) {
-			if(!global_list.contains(id) && !list.contains(id)) {
-				return false;
-			}
+		if(!list.contains(id)) {
+			return false;
 		}
 		return true;
 	}
@@ -39,6 +35,22 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 		return true;  
 	}
 
+	/* Method checks for any identical declarations in the same scope*/
+	private static void scanForIdenticalDeclarations() {
+		if (!identicalDeclarations.isEmpty()) {
+			Enumeration keys = identicalDeclarations.keys();
+			System.out.println("\nDuplicate Declaration Checking: ");
+			while(keys.hasMoreElements()) {
+				String scope = keys.nextElement().toString();
+				LinkedHashSet<String> matches = identicalDeclarations.get(scope);
+				Iterator iterator = matches.iterator();
+				while(iterator.hasNext()) {
+					System.out.println("Error: Declaration with ID (" + iterator.next() + ") has been declared more than once.");
+				}
+			}
+		}
+	}
+
 	public Object visit(SimpleNode node, Object data) {
 		throw new RuntimeException("Visit SimpleNode");
 	}
@@ -47,16 +59,22 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 		// Preprocess & setup
 		ST = (STC) data;
 
-		// begin semantic analysis
 		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
 			node.jjtGetChild(i).jjtAccept(this, data);
 		}
+
+		// Before returning Program DataType --
+		// Print matching IDs in same scope errors
+		scanForIdenticalDeclarations();
 		return DataType.Program;
 	}
 
 	public Object visit(ASTMain node, Object data) {
 		this.scope = "main";
-		return DataType.Function;
+		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+			node.jjtGetChild(i).jjtAccept(this, data);
+		}
+		return data;
 	}
 
 	public Object visit(ASTParameter node, Object data) {
@@ -75,7 +93,10 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	}
 
 	public Object visit(ASTArg_list node, Object data) {
-		return(node.jjtGetChild(0).jjtAccept(this, data));
+		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
+			node.jjtGetChild(i).jjtAccept(this, data);
+		}
+		return data;
 	}
 
 	public Object visit(ASTNemp_arg_list node, Object data) {
@@ -83,61 +104,91 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	}
 
 	public Object visit(ASTFunction node, Object data) {
-		this.scope = (String) node.jjtGetChild(1).jjtAccept(this, data);
+		this.scope = node.jjtGetChild(1).jjtAccept(this, data).toString();
 		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
 			node.jjtGetChild(i).jjtAccept(this, data);
 		}
 		return DataType.Function;
 	}
 
+	private static void checkForMatchingDeclarations(String ID, String scope) {
+		if (!ST.hasNoIdenticalDeclarations(ID, scope)) {
+			HashSet<String> items = identicalDeclarations.get(scope);
+			if (items == null) {
+				LinkedHashSet<String> newRow = new LinkedHashSet<>();
+				newRow.add(ID);
+				identicalDeclarations.put(scope, newRow);
+			}
+			else
+				items.add(ID);
+		}
+	}
+
+	/* For Const / Variable Declarations
+ 	 * Be careful of redeclarations with the same ID in the same scope.
+ 	 * To prevent this, keep track of variable IDs/scope in this class.
+ 	 * Any clash will report an error to the console */
 	public Object visit(ASTVarDecl node, Object data) {
+		String ID = node.jjtGetChild(0).jjtAccept(this, data).toString();
+		checkForMatchingDeclarations(ID, scope);
 		return DataType.VariableDeclaration;
 	}
 
 	public Object visit(ASTConstDecl node, Object data) {
 		String type = (String) node.jjtGetChild(1).jjtAccept(this, data);
-		String const_val = (String) node.jjtGetChild(2).jjtAccept(this, data);
-		if (type.equals("integer") && isNumeric(const_val)) {
-			return DataType.ConstantDeclaration;
+		String const_val = node.jjtGetChild(2).jjtAccept(this, data).toString();
+		// Check numeric edge cases
+		if (type.equals("integer") && const_val.equals("TypeInteger")) {
+			return DataType.TypeInteger;
 		}
-		System.out.println("Error: Constant with ID (" + node.jjtGetChild(0).jjtAccept(this, data) + ") type mismatch with assigned value.");
-		return DataType.TypeUnknown;
+
+		// Check Boolean edge cases
+		else if (type.equals("boolean") && (const_val.equals("true") || const_val.equals("false"))) {
+			return DataType.TypeBoolean;
+		}
+
+		else {
+			System.out.println("Error: Constant with ID (" + node.jjtGetChild(0).jjtAccept(this, data) + ") type mismatch with assigned value.");
+			return DataType.TypeUnknown;
+		}
 
 	}
 
 	public Object visit(ASTStatement node, Object data) {
-		if(node.jjtGetNumChildren() > 0) {
-			String id = (String)node.jjtGetChild(0).jjtAccept(this, data);
-        
+		if(node.jjtGetNumChildren() > 0 && !node.jjtGetChild(0).jjtAccept(this, data).toString().equals("TypeUnknown")) {
+			String id = node.jjtGetChild(0).jjtAccept(this, data).toString();
+			
 			// functions with no previous statement contain func name as id
 			if(ST.isFunction(id)) {
-            	invokedFunctions.add(id);
+				System.out.println("function call added: " + id);
+            	functionCalls.add(id);
         	}
 
+			// Check integer/boolean/function calls
         	if(isDeclared(id, scope)) {
             	String type = ST.getType(id, scope);
             	String description = ST.getDescription(id, scope);
+				
             	if(description.equals("const")) {
-                	System.out.println("Error: " + id + " is a constant and cannot be redeclared");
+                	System.out.println("Error: ID (" + id + ") is a constant and cannot be redeclared");
             	}
             	else {
-            		String rhs = node.jjtGetChild(1).toString();
+            		String rhs = node.jjtGetChild(1).jjtAccept(this, data).toString();
             		if(type.equals("integer")) {
-                		if(rhs.equals("Num"))
-                		{
+						if (rhs.equals("TypeInteger") || isNumeric(rhs)) {
                     		node.jjtGetChild(1).jjtAccept(this, data);
+						}
+                		else if(rhs.equals("TypeBoolean")) {
+                    		System.out.println("Error: Expected assignment of type integer for ID (" + id + ") instead got boolean");
                 		}
-                		else if(rhs.equals("BoolOp")) {
-                    		System.out.println("Error: Expected type integer instead got boolean");
-                		}
-                		else if(rhs.equals("FuncReturn")) {
-                    		String func_name = (String) node.jjtGetChild(1).jjtAccept(this, data);
+                		else if(ST.isFunction(node.jjtGetChild(1).jjtAccept(this, data).toString())) {
+                    		String func_name = node.jjtGetChild(1).jjtAccept(this, data).toString();
                     		// check if function is declared in global scope
                     		if(!isDeclared(func_name, "global") && !isDeclared(func_name, scope)) {
                         		System.out.println("Error: " + func_name + " is not declared");
                     		}     
                     		else if(ST.isFunction(func_name)) {
-                        		invokedFunctions.add(func_name);
+                        		functionCalls.add(func_name);
                         		// get return type of function
                         		String func_return = ST.getType(func_name, "global");
                         		if(!func_return.equals("integer")) {
@@ -145,8 +196,10 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
                         		}
                 
                     			int num_args = ST.getParams(func_name);
-                    			// Statement -> FuncReturn -> ArgList -> children of arglist
-                    			int actual_args = node.jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren();
+                    			// Statement followed by
+                    			// Exp followed by 
+                    			// Arglist -> Nemp_arg_list -> count children
+                    			int actual_args = node.jjtGetChild(1).jjtGetChild(1).jjtGetChild(0).jjtGetNumChildren();
                     			// check that the correct number of args is used
                     			if(num_args != actual_args) 
                         			System.out.println("Error: Expected " + num_args + " parameters instead got " + actual_args);
@@ -170,30 +223,35 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
                     			}
 							}
                 		}
+						else {
+							System.out.println("Error: Expected integer assignment for ID (" + id + ")");
+							}
             		}
-            	else if(type.equals("boolean")) {
-              		if(rhs.equals("BoolOp"))
-                	{
-                    	node.jjtGetChild(1).jjtAccept(this, data);
+            		else if(type.equals("boolean")) {
+              			if(rhs.equals("TypeBoolean")) {
+                    		node.jjtGetChild(1).jjtAccept(this, data);
+                		}
+                		else if(rhs.equals("TypeInteger")) {
+                    		System.out.println("Error: Expected type boolean for ID (" + id + ") instead got integer");
                 	}
-                	else if(rhs.equals("Num")) {
-                    	System.out.println("Error: Expected type boolean instead got integer");
-                	}
-                	else if(rhs.equals("FuncReturn")) {
-                    	String func_name = (String) node.jjtGetChild(1).jjtAccept(this, data);
-                    	// check if function is declared in global scope
-                    	if(!isDeclared(func_name, "global")) {
-                        	System.out.println(func_name + " is not declared");
-                    	}
-                    	else {
-                        	// get return type of function
-                        	String func_return = ST.getType(func_name, "global");
-                        	if(!func_return.equals("boolean")) {
-                            	System.out.println("Error: Expected return type of boolean instead got " + func_return);
-                        	}
-                    	}
-                	}
-            	}
+                		else if(rhs.equals("FuncReturn")) {
+                    		String func_name = (String) node.jjtGetChild(1).jjtAccept(this, data);
+                    		// check if function is declared in global scope
+                    		if(!isDeclared(func_name, "global")) {
+                        		System.out.println(func_name + " is not declared");
+                    		}
+                    		else {
+                        		// get return type of function
+                        		String func_return = ST.getType(func_name, "global");
+                        		if(!func_return.equals("boolean")) {
+                            		System.out.println("Error: Expected return type of boolean instead got " + func_return);
+                        		}
+                    		}
+                		}
+						else {
+							System.out.println("Error: Expected boolean assignment but got String for ID (" + id + ")");
+						}
+					}
         		}
         	}
         	else if(!isDeclared(id, scope)) {
@@ -210,22 +268,27 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 		return data;
 	}
 
+	/* Arithmetic operations are checked here
+ 	 * Valid operations involve DataType.TypeIntegers. */
 	public Object visit(ASTAdd_Op node, Object data) {
-		System.out.println("here");
-		if (((DataType)node.jjtGetChild(0).jjtAccept(this, data) == DataType.TypeInteger) && (DataType)node.jjtGetChild(1).jjtAccept(this, data) == DataType.TypeInteger) {
-			System.out.println("first");
+		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
+		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
+	
+		//System.out.println("One: " + childOne);
+		//System.out.println("Two: " + childTwo);
+
+		if (childOne.equals("TypeInteger") && childTwo.equals("TypeInteger")) {
 			return DataType.TypeInteger;
 		}
-		else if ((node.jjtGetChild(1).jjtAccept(this, data) != DataType.TypeInteger 
- && node.jjtGetChild(0).jjtAccept(this, data) == DataType.TypeInteger) && isDeclared((String) node.jjtGetChild(1).jjtAccept(this, data), scope)) {
-			System.out.println("helllloo)");
-			return data;
-		}
-			
 		else {
-			System.out.println("--> " + node.jjtGetChild(1).jjtAccept(this, data));
-			return DataType.TypeUnknown;
+			if (childOne.equals("TypeInteger") && isDeclared(childTwo, scope) && ST.getType(childTwo, scope).equals("integer"))
+				return DataType.TypeInteger;
+			else if (childTwo.equals("TypeInteger") && ST.getType(childOne, scope).equals("integer"))
+				return DataType.TypeInteger;
+			else if (isDeclared(childOne, scope) && ST.getType(childOne, scope).equals("integer") && isDeclared(childTwo, scope) && ST.getType(childTwo, scope).equals("integer"))
+				return DataType.TypeInteger;
 		}
+		return DataType.TypeUnknown;
 	}
 
 	public Object visit(ASTMinus_Op node, Object data) {
@@ -236,18 +299,40 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	}
 
 	public Object visit(ASTLogical_Conjunction node, Object data) {
-		if ((node.jjtGetChild(0).jjtAccept(this, data) == DataType.TypeBoolean) && (node.jjtGetChild(1).jjtAccept(this, data) == DataType.TypeBoolean))
+		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
+		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
+		
+		if (childOne.equals("TypeBoolean") && childTwo.equals("TypeBoolean")) {
 			return DataType.TypeBoolean;
-		else
-			return DataType.TypeUnknown;
+		}
+		else {
+			if (childTwo.equals("TypeInteger") && ST.getType(childOne, scope).equals("boolean")) {
+				System.out.println("Error: Condition contains Integer Value(" + childTwo + ") as boolean operator");
+				return DataType.TypeBoolean;
+			}
+			else if (ST.getType(childTwo, scope).equals("boolean") && childOne.equals("TypeInteger")) {
+				return DataType.TypeBoolean;
+			}
+				
+		}
+		return DataType.TypeUnknown;
 	}
 
 	public Object visit(ASTLogical_Disjunction node, Object data) {
-		return data;
-		/*if (((DataType)node.jjtGetChild(0).jjtAccept(this, data) == DataType.TypeBoolean) && ((DataType)node.jjtGetChild(1).jjtAccept(this, data) == DataType.TypeBoolean))
-		return DataType.TypeBoolean;
+		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
+		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
+		if (node.jjtGetChild(0).jjtAccept(this, data) == DataType.TypeBoolean && 
+			node.jjtGetChild(1).jjtAccept(this, data) == DataType.TypeBoolean) {
+			return DataType.TypeBoolean;
+		}
+
+		if (!ST.getType(childOne, scope).equals("boolean"))
+			System.out.println("Error: Expected boolean value but got value of (" + childOne + ") in conditional statement");	
+		else if (!ST.getType(childTwo, scope).equals("boolean"))
+			System.out.println("Error: Expected boolean value but got value of (" + childTwo + ") in conditional statement");
 		else
-		return DataType.TypeUnknown;*/
+			return DataType.TypeBoolean;
+		return DataType.TypeUnknown;
 	}
 
 	public Object visit(ASTNot_op node, Object data) {
@@ -259,15 +344,9 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 
 	public Object visit(ASTExp node, Object data) {
 		return node.jjtGetChild(0).jjtAccept(this, data);
-		// return DataType.Expression;
 	}
 
 	public Object visit(ASTBracket_Expression node, Object data) {
-		node.jjtGetChild(0).jjtAccept(this, data);
-		return data;
-	}
-
-	public Object visit(ASTCondition node, Object data) {
 		node.jjtGetChild(0).jjtAccept(this, data);
 		return data;
 	}
@@ -283,8 +362,15 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	}
 
 	public Object visit(ASTLess_Than node, Object data) {
-		node.jjtGetChild(0).jjtAccept(this, data);
-		return data;
+		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
+		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
+		if (!ST.getType(childOne, scope).equals("boolean"))
+			System.out.println("Error: Expected boolean value but got value of (" + childOne + ") in conditional statement");	
+		else if (!ST.getType(childTwo, scope).equals("boolean"))
+			System.out.println("Error: Expected boolean value but got value of (" + childTwo + ") in conditional statement");
+		else
+			return DataType.TypeBoolean;
+		return DataType.TypeUnknown;
 	}
 
 	public Object visit(ASTLess_Than_Or_Equal node, Object data) {
@@ -312,21 +398,20 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 		return data;
 	}
 
-	public Object visit(ASTBracket_Condition node, Object data) {
-		node.jjtGetChild(0).jjtAccept(this, data);
-		return data;
-	}
-
 	public Object visit(ASTIdentifier node, Object data) {
 		return node.value;
 	}
 
 	public Object visit(ASTNumber node, Object data) {
-		return node.value;
+		return DataType.TypeInteger;
+	}
+
+	public Object visit(ASTBoolean node, Object data) {
+		return DataType.TypeBoolean;
 	}
 
 	public Object visit(ASTMinus_sign node, Object data) {
-		return DataType.TypeUnknown;
+		return node.value;
 	}
 
 	public Object visit(ASTReturn node, Object data) {
@@ -335,11 +420,6 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 
 	public Object visit(ASTType node, Object data) {
 		return node.value;
-	}
-
-	public Object visit(ASTAssignment_structure node, Object data) {
-		node.jjtGetChild(0).jjtAccept(this, data);
-		return data;
 	}
 
 	public Object visit(ASTFunction_call_structure node, Object data) {

@@ -34,14 +34,13 @@ public class STC extends Object
         if(type != null) 
             return type;
         else {
-            type = typeTable.get(id + "/" + "global");
-            if(type != null) {
-                return type;
-            }
+			type = typeTable.get(id + "/" + "global");
+           	if(type != null) {
+               	return type;
+           	}
         }
         return null;
-    }
-	
+	}
 
 	public void put(String id, String type, String info, String scope) {
 		LinkedList<String> list = symbolTable.get(scope);
@@ -106,8 +105,8 @@ public class STC extends Object
         LinkedList<String> list = symbolTable.get(id);
         int count = 0;
         for(int i = 0; i < list.size(); i++) {
-            String description = descriptionTable.get(list.get(i)+id);
-            if(description.equals("param")) {
+            String description = descriptionTable.get(list.get(i) + "/" + id);
+            if(description.equals("parameter")) {
                 count++;
             }
         }
@@ -140,5 +139,14 @@ public class STC extends Object
 			return descriptionTable.get(id + "/" + "global");
 		
     }
+
+	// Check for identical declarations in global / current scope.
+	public boolean hasNoIdenticalDeclarations(String id, String scope) {
+		LinkedList<String> current = this.symbolTable.get(scope);
+		
+		// Check if the id has only occured once in the current scope
+		return ((current.indexOf(id) == current.lastIndexOf(id)));
+
+	}
 
 }

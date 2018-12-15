@@ -40,10 +40,10 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTStatement node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTCondition node, Object data){
+  public Object visit(ASTMinus_sign node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTMinus_sign node, Object data){
+  public Object visit(ASTBoolean node, Object data){
     return defaultVisit(node, data);
   }
   public Object visit(ASTExp node, Object data){
@@ -55,19 +55,10 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTMinus_Op node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTBracket_Expression node, Object data){
-    return defaultVisit(node, data);
-  }
-  public Object visit(ASTNot_op node, Object data){
-    return defaultVisit(node, data);
-  }
   public Object visit(ASTLogical_Conjunction node, Object data){
     return defaultVisit(node, data);
   }
   public Object visit(ASTLogical_Disjunction node, Object data){
-    return defaultVisit(node, data);
-  }
-  public Object visit(ASTBracket_Condition node, Object data){
     return defaultVisit(node, data);
   }
   public Object visit(ASTEquals node, Object data){
@@ -94,9 +85,6 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTNemp_arg_list node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTAssignment_structure node, Object data){
-    return defaultVisit(node, data);
-  }
   public Object visit(ASTFunction_call_structure node, Object data){
     return defaultVisit(node, data);
   }
@@ -116,4 +104,4 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
     return defaultVisit(node, data);
   }
 }
-/* JavaCC - OriginalChecksum=34563ea536ac118cffa62324e2fc394f (do not edit this line) */
+/* JavaCC - OriginalChecksum=1a4850a69f8ddda0bfe42b1adab19fb8 (do not edit this line) */

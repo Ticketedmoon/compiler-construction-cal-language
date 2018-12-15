@@ -293,6 +293,11 @@ public class PrintVisitor implements AssignmentTwoVisitor
 		return data;
     }
 
+    public Object visit(ASTBoolean node, Object data) {
+		System.out.print(node.value);
+		return data;
+    }
+
 	public Object visit(ASTReturn node, Object data) {
 		System.out.print("        return ");
 		if(node.jjtGetNumChildren() == 0) 

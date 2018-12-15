@@ -13,31 +13,27 @@ public interface AssignmentTwoTreeConstants
   public int JJTPARAMETER_LIST = 9;
   public int JJTPARAMETER = 10;
   public int JJTSTATEMENT = 11;
-  public int JJTCONDITION = 12;
-  public int JJTMINUS_SIGN = 13;
+  public int JJTMINUS_SIGN = 12;
+  public int JJTBOOLEAN = 13;
   public int JJTEXP = 14;
   public int JJTADD_OP = 15;
   public int JJTMINUS_OP = 16;
-  public int JJTBRACKET_EXPRESSION = 17;
-  public int JJTNOT_OP = 18;
-  public int JJTLOGICAL_CONJUNCTION = 19;
-  public int JJTLOGICAL_DISJUNCTION = 20;
-  public int JJTBRACKET_CONDITION = 21;
-  public int JJTEQUALS = 22;
-  public int JJTNOT_EQUALS = 23;
-  public int JJTLESS_THAN = 24;
-  public int JJTLESS_THAN_OR_EQUAL = 25;
-  public int JJTGREATER_THAN = 26;
-  public int JJTGREATER_THAN_OR_EQUAL = 27;
-  public int JJTARG_LIST = 28;
-  public int JJTNEMP_ARG_LIST = 29;
-  public int JJTASSIGNMENT_STRUCTURE = 30;
-  public int JJTFUNCTION_CALL_STRUCTURE = 31;
-  public int JJTSTATEMENT_BEGIN_STRUCTURE = 32;
-  public int JJTNUMBER = 33;
-  public int JJTIDENTIFIER = 34;
-  public int JJTTYPE = 35;
-  public int JJTMAIN = 36;
+  public int JJTLOGICAL_CONJUNCTION = 17;
+  public int JJTLOGICAL_DISJUNCTION = 18;
+  public int JJTEQUALS = 19;
+  public int JJTNOT_EQUALS = 20;
+  public int JJTLESS_THAN = 21;
+  public int JJTLESS_THAN_OR_EQUAL = 22;
+  public int JJTGREATER_THAN = 23;
+  public int JJTGREATER_THAN_OR_EQUAL = 24;
+  public int JJTARG_LIST = 25;
+  public int JJTNEMP_ARG_LIST = 26;
+  public int JJTFUNCTION_CALL_STRUCTURE = 27;
+  public int JJTSTATEMENT_BEGIN_STRUCTURE = 28;
+  public int JJTNUMBER = 29;
+  public int JJTIDENTIFIER = 30;
+  public int JJTTYPE = 31;
+  public int JJTMAIN = 32;
 
 
   public String[] jjtNodeName = {
@@ -53,16 +49,13 @@ public interface AssignmentTwoTreeConstants
     "Parameter_list",
     "Parameter",
     "Statement",
-    "Condition",
     "Minus_sign",
+    "Boolean",
     "Exp",
     "Add_Op",
     "Minus_Op",
-    "Bracket_Expression",
-    "Not_op",
     "Logical_Conjunction",
     "Logical_Disjunction",
-    "Bracket_Condition",
     "Equals",
     "Not_Equals",
     "Less_Than",
@@ -71,7 +64,6 @@ public interface AssignmentTwoTreeConstants
     "Greater_Than_Or_Equal",
     "Arg_list",
     "Nemp_arg_list",
-    "Assignment_structure",
     "Function_call_structure",
     "Statement_Begin_Structure",
     "Number",
@@ -80,4 +72,4 @@ public interface AssignmentTwoTreeConstants
     "Main",
   };
 }
-/* JavaCC - OriginalChecksum=3542815b2366c7140760ba7416e1652e (do not edit this line) */
+/* JavaCC - OriginalChecksum=d9055e6fb2a9984c193050a129c09c29 (do not edit this line) */

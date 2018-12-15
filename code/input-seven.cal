@@ -1,17 +1,28 @@
 variable x: integer;
+variable i: integer;
+variable j: integer;
 variable y: boolean;
-constant val: integer := welcome;
+variable y: boolean;
+constant val: integer := hello;
+constant tmp: integer := 5;
 
 integer getMax(x: integer) is
-variable z: integer;
+variable z: boolean;
+variable p: boolean;
 begin
-	x := (5 + 28) + y + z;
-	p := 5;
-	return ();
+	x := (5 + x + 5 - tmp + j) + true;
+	if (y & 5)
+		begin
+			j := 10;
+		end
+	return (5);
 end
 	
 
 main
 	begin
-	
+		variable q: integer;
+		variable x: integer;
+		q := true;
+		x := getMax(q);
 	end
