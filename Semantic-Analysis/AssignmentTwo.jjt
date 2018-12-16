@@ -151,7 +151,7 @@ SimpleNode program() #Program: {}
 	[DeclarationList()]
 
 	// Functions
-	[FunctionList() #FunctionList]
+	[FunctionList()]
 
 	// Main Program
 	Main()
@@ -162,7 +162,7 @@ SimpleNode program() #Program: {}
 
 /* Declaration Rules */
 // A declaration list has one or more declarations.
-void DeclarationList() #DeclarationList: 
+void DeclarationList(): 
 {}
 {
 	(Declaration() <SEMICOLON>)+
@@ -229,8 +229,8 @@ void function():
 	<LBRACE> parameter_list() <RBRACE> <IS>
 	[DeclarationList()]
 	<BEGIN>
-		statement_block() #Statement_block
-	    function_return() #Return
+		statement_block()
+	    function_return() #FuncReturn
 	<END>)
 	{scope = "global";}
 }
@@ -291,7 +291,7 @@ void fragment():
 /* Expression can be a simple_expression() followed by 0 or 1 more
  * Arithmetic operators and an expression.
  */
-void expression() #Exp:
+void expression():
 {Token t;}
 {
     simple_expression() 
@@ -321,8 +321,8 @@ void condition():
 {Token t;}
 {   
     (<NOT> simple_condition() | simple_condition())
-	[    t = <AND> condition() {jjtThis.value = t.image;} #Logical_Conjunction(2)
-	   | t = <OR> condition() {jjtThis.value = t.image;} #Logical_Disjunction(2)
+	[    t = <AND> condition() {jjtThis.value = t.image;} #LogicalAND
+  	     t = <OR> condition() {jjtThis.value = t.image;} #LogicalOR
 	]
 }
 
@@ -337,12 +337,12 @@ void simple_condition():
 {   
     <LBRACE> condition() <RBRACE>
     | special_expression() 
-	[	t = <EQUALS>  expression() {jjtThis.value = t.image;} #Equals(2)
-	| 	t = <NOT_EQUALS>  expression() {jjtThis.value = t.image;} #Not_Equals(2)
-	| 	t = <LESS_THAN>  expression() {jjtThis.value = t.image;} #Less_Than(2)
-	| 	t = <LESS_THAN_OR_EQUAL>  expression() {jjtThis.value = t.image;} #Less_Than_Or_Equal(2)
-	| 	t = <GREATER_THAN>  expression() {jjtThis.value = t.image;} #Greater_Than(2)
-	| 	t = <GREATER_THAN_OR_EQUAL> expression() {jjtThis.value = t.image;} #Greater_Than_Or_Equal(2)
+	[	t = <EQUALS>  expression() {jjtThis.value = t.image;} #Equals
+	| 	t = <NOT_EQUALS>  expression() {jjtThis.value = t.image;} #Not_Equals
+	| 	t = <LESS_THAN>  expression() {jjtThis.value = t.image;} #Less_Than
+	| 	t = <LESS_THAN_OR_EQUAL>  expression() {jjtThis.value = t.image;} #Less_Than_Or_Equal
+	| 	t = <GREATER_THAN>  expression() {jjtThis.value = t.image;} #Greater_Than
+	| 	t = <GREATER_THAN_OR_EQUAL> expression() {jjtThis.value = t.image;} #Greater_Than_Or_Equal
 	] 
 }
 
@@ -358,7 +358,7 @@ void special_expression():
 }
 
 // Similar to simple_expression, but without the <LBRACE> choice conflict.
-void simple_special_expression() #Exp:
+void simple_special_expression():
 {}
 {
     Identifier() [<LBRACE> (arg_list() #Arg_list) <RBRACE>]
@@ -418,7 +418,7 @@ void Main() #Main:
 		<MAIN>
 			<BEGIN> 
 				[DeclarationList()] 
-				(statement_block() #Statement_block) 
+				(statement_block()) 
 			<END>
 	)
 }

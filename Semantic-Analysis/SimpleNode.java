@@ -75,13 +75,22 @@ class SimpleNode implements Node {
   public String toString() {
     return AssignmentTwoTreeConstants.jjtNodeName[id];
   }
+
   public String toString(String prefix) { return prefix + toString(); }
 
   /* Override this method if you want to customize how the node dumps
      out its children. */
 
   public void dump(String prefix) {
-    System.out.println(toString(prefix));
+    System.out.print(toString(prefix));
+
+	// method update for cleaner AST look.
+
+    if(value != null) {
+        System.out.print(" [" + value + "]");
+    }
+    System.out.println();
+
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         SimpleNode n = (SimpleNode)children[i];

@@ -11,7 +11,7 @@ variable z: boolean;
 variable p: boolean;
 begin
 	x := (5 + x + 5 - tmp + j) + true;
-	if (y & true & false) & (y & z) & p
+	if (y)
 		begin
 			j := 10;
 			tmp := 1;

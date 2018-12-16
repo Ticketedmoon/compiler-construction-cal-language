@@ -32,11 +32,8 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	// Find out how many arguments were passed.
 	// @return: int.
 	private static int getPassedFuncArgs(ASTStatement node) {
-		String childNode = node.jjtGetChild(1).toString();
-		if (!childNode.equals("Arg_list") && node.jjtGetChild(1).jjtGetChild(1).jjtGetNumChildren() > 0)
-			return node.jjtGetChild(1).jjtGetChild(1).jjtGetNumChildren();
-		else if (childNode.equals("Arg_list"))
-			return node.jjtGetChild(1).jjtGetNumChildren();
+		if (node.jjtGetChild(2).jjtGetNumChildren() > 0)
+			return node.jjtGetChild(2).jjtGetNumChildren();
 		else
 			return 0;
 	}
@@ -114,14 +111,6 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	// Parameter list - Cycle through all child parameters.
 	public Object visit(ASTParameter_list node, Object data) {
 		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-			node.jjtGetChild(i).jjtAccept(this, data);
-		}
-		return data;
-	}
-
-	// Declaration list node - Cycle through all child declarations.
-	public Object visit(ASTDeclarationList node, Object data) {	
-		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
 			node.jjtGetChild(i).jjtAccept(this, data);
 		}
 		return data;
@@ -266,6 +255,7 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
                         		}
 
                     			else if(ST.isFunction(rval)) {
+									System.out.println("here");
 									isFunctionAvailable(rval, node, data);
 								}
                     		}
@@ -286,14 +276,6 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 		}
     	return data;    
 	}	
-
-	// FunctionList node - encapsulates all of our functions.
-	public Object visit(ASTFunctionList node, Object data) {
-		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
-			node.jjtGetChild(i).jjtAccept(this, data);
-		}
-		return data;
-	}
 
 	/* Arithmetic operations are checked here
  	 * Valid operations involve DataType.TypeIntegers. */
@@ -319,7 +301,7 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 
 	// AND operation
 	// Has two children always.
-	public Object visit(ASTLogical_Conjunction node, Object data) {
+	public Object visit(ASTLogicalAND node, Object data) {
 		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
 		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
 		
@@ -350,7 +332,7 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 
 	// OR operation
 	// Has two children always.
-	public Object visit(ASTLogical_Disjunction node, Object data) {
+	public Object visit(ASTLogicalOR node, Object data) {
 		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
 		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
 		
@@ -544,7 +526,7 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 
 	// Return function - allows return statements to be smarter 
 	// and more semantically correct.
-	public Object visit(ASTReturn node, Object data) {
+	public Object visit(ASTFuncReturn node, Object data) {
 		String functionType = ST.getType(scope, "global");
 		if (node.jjtGetNumChildren() > 0) {
 			String returnVal = node.jjtGetChild(0).jjtAccept(this, data).toString();
@@ -575,11 +557,4 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 		return data;
 	}
 
-	// Statement_block - Encapsulates all of the statements within a particular scope.
-	public Object visit(ASTStatement_block node, Object data) {
-		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
-			node.jjtGetChild(i).jjtAccept(this, data);
-		}
-		return data;
-	}
 }

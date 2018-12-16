@@ -10,12 +10,6 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTProgram node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTFunctionList node, Object data){
-    return defaultVisit(node, data);
-  }
-  public Object visit(ASTDeclarationList node, Object data){
-    return defaultVisit(node, data);
-  }
   public Object visit(ASTVarDecl node, Object data){
     return defaultVisit(node, data);
   }
@@ -25,10 +19,7 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTFunction node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTStatement_block node, Object data){
-    return defaultVisit(node, data);
-  }
-  public Object visit(ASTReturn node, Object data){
+  public Object visit(ASTFuncReturn node, Object data){
     return defaultVisit(node, data);
   }
   public Object visit(ASTParameter_list node, Object data){
@@ -49,16 +40,13 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTBoolean node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTExp node, Object data){
-    return defaultVisit(node, data);
-  }
   public Object visit(ASTAdd_Op node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTLogical_Conjunction node, Object data){
+  public Object visit(ASTLogicalAND node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTLogical_Disjunction node, Object data){
+  public Object visit(ASTLogicalOR node, Object data){
     return defaultVisit(node, data);
   }
   public Object visit(ASTEquals node, Object data){
@@ -92,4 +80,4 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
     return defaultVisit(node, data);
   }
 }
-/* JavaCC - OriginalChecksum=74a48894f0ef912f45aee2f1e62e5ac9 (do not edit this line) */
+/* JavaCC - OriginalChecksum=d8b36a2387972f6765302f2b978a5f78 (do not edit this line) */
