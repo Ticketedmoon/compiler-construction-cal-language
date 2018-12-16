@@ -32,8 +32,13 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	// Find out how many arguments were passed.
 	// @return: int.
 	private static int getPassedFuncArgs(ASTStatement node) {
-		if (node.jjtGetChild(2).jjtGetNumChildren() > 0)
-			return node.jjtGetChild(2).jjtGetNumChildren();
+		// Case where function call is direct and not assigned: E.G. func(argX)
+		if (node.jjtGetNumChildren() > 2)
+			return node.jjtGetChild(3).jjtGetNumChildren();
+		// case where function call is assigned to a variable E.G. x := getMax(argY)
+		else if (node.jjtGetNumChildren() == 2)
+			return node.jjtGetChild(1).jjtGetNumChildren();
+		// case where no arguments have been passed in function call. Just return 0.
 		else
 			return 0;
 	}
@@ -42,7 +47,7 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	private static void scanForIdenticalDeclarations() {
 		if (!identicalDeclarations.isEmpty()) {
 			Enumeration keys = identicalDeclarations.keys();
-			System.out.println("\nDuplicate Declaration Checking: ");
+			System.out.println("\nDuplicate Declaration Checking...");
 			while(keys.hasMoreElements()) {
 				String scope = keys.nextElement().toString();
 				LinkedHashSet<String> matches = identicalDeclarations.get(scope);
@@ -57,15 +62,15 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	/* Method checks for any any function calls in program and prints them. */
 	private static void scanForFunctionErrors() {
 		// Print out all invoked functions for clarity
-		System.out.println("\nInvoked Functions: ");
+		System.out.println("\nChecking All Invoked Functions...");
 		for (String s : functionCalls) 
-			System.out.println("Function with ID (" + s + ") was invoked.");
+			System.out.println("> Function with ID (" + s + ") was invoked.");
 
 		// Print out all defined functions that have never been invoked as a warning.
-		System.out.println("\nUninvoked Functions: ");
+		System.out.println("\nChecking For Uninvoked Functions...");
 		for (String s : ST.getFunctionList()) {
 			if (!functionCalls.contains(s))
-				System.out.println("Warning: Function with ID (" + s + ") has been defined but never invoked.");
+				System.out.println("> Warning: Function with ID (" + s + ") has been defined but never invoked.");
 		}
 	}
 
@@ -207,7 +212,7 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
                 	System.out.println("Error: ID (" + id + ") is a constant and cannot be redeclared");
             	}
             	else {
-            		String rval = node.jjtGetChild(1).jjtAccept(this, data).toString();
+            		String rval = node.jjtGetChild(2).jjtAccept(this, data).toString();
             		if(type.equals("integer")) {
 						if (rval.equals("TypeInteger")) {
                     		node.jjtGetChild(1).jjtAccept(this, data);
@@ -216,7 +221,7 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
                     		System.out.println("Error: Expected assignment of type integer for ID (" + id + ") instead got boolean");
                 		}
                 		else if(ST.isFunction(rval)) {
-                    		String func_name = node.jjtGetChild(1).jjtAccept(this, data).toString();
+                    		String func_name = node.jjtGetChild(2).jjtAccept(this, data).toString();
                     		// check if function is declared in global scope
                     		if(!isDeclared(func_name, "global") && !isDeclared(func_name, scope)) {
                         		System.out.println("Error: " + func_name + " is not declared");
@@ -255,7 +260,6 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
                         		}
 
                     			else if(ST.isFunction(rval)) {
-									System.out.println("here");
 									isFunctionAvailable(rval, node, data);
 								}
                     		}
@@ -302,100 +306,25 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	// AND operation
 	// Has two children always.
 	public Object visit(ASTLogicalAND node, Object data) {
-		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
-		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
-		
-		if (childOne.equals("TypeBoolean") && childTwo.equals("TypeBoolean")) {
-			return DataType.TypeBoolean;
-		}
-		else {
-			if (childTwo.equals("TypeInteger") && ST.getType(childOne, scope).equals("boolean")) {
-				System.out.println("Error: Condition contains Integer Value as boolean operand");
-				return data;
-			}
-			else if (childOne.equals("TypeInteger") && ST.getType(childTwo, scope).equals("boolean")) {
-				System.out.println("Error: Condition contains Integer Value as boolean operand");
-				return data;
-			}
-			else if (isDeclared(childOne, scope) && ST.getType(childOne, scope).equals("boolean") 
-						&& isDeclared(childTwo, scope) && ST.getType(childTwo, scope).equals("boolean")) {
-				return data;
-			}
-			else if ((childOne.equals("TypeInteger") || childTwo.equals("TypeInteger")) 
-						&& (ST.getType(childOne, scope).equals("integer") || ST.getType(childTwo, scope).equals("integer"))) {
-				System.out.println("Error: Condition contains integer values as boolean operands");
-				return data;
-			}
-		}
 		return DataType.TypeBoolean;
 	}
 
 	// OR operation
 	// Has two children always.
 	public Object visit(ASTLogicalOR node, Object data) {
-		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
-		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
-		
-		if (childOne.equals("TypeBoolean") && childTwo.equals("TypeBoolean")) {
-			return DataType.TypeBoolean;
-		}
-		else {
-			if (childTwo.equals("TypeInteger") && ST.getType(childOne, scope).equals("boolean")) {
-				System.out.println("Error: Condition contains Integer Value as boolean operand");
-				return data;
-			}
-			else if (childOne.equals("TypeInteger") && ST.getType(childTwo, scope).equals("boolean")) {
-				System.out.println("Error: Condition contains Integer Value as boolean operand");
-				return data;
-			}
-			else if (isDeclared(childOne, scope) && ST.getType(childOne, scope).equals("boolean") 
-						&& isDeclared(childTwo, scope) && ST.getType(childTwo, scope).equals("boolean")) {
-				return data;
-			}
-			else if ((childOne.equals("TypeInteger") || childTwo.equals("TypeInteger")) 
-						&& (ST.getType(childOne, scope).equals("integer") || ST.getType(childTwo, scope).equals("integer"))) {
-				System.out.println("Error: Condition contains integer values as boolean operands");
-				return data;
-			}
-		}
 		return DataType.TypeBoolean;
-	}
-
-	// Expression node, child evaluates to a terminal so return it.
-	public Object visit(ASTExp node, Object data) {
-		return node.jjtGetChild(0).jjtAccept(this, data);
 	}
 
 	// Equals operation
 	// Has two children always.
 	public Object visit(ASTEquals node, Object data) {
-		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
-		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
-	
-		if ( (childOne.equals("TypeInteger") || ST.getType(childOne, scope).equals("integer")) 
-				&& (childTwo.equals("TypeInteger") || ST.getType(childTwo, scope).equals("integer")) ) 
-			return DataType.TypeBoolean;
-		else if (childOne.equals("TypeBoolean") && childTwo.equals("TypeBoolean")) 
-			return DataType.TypeBoolean;
-		else
-			if (ST.getType(childOne, scope).equals("boolean") && (childTwo.equals("TypeBoolean") 
-				|| childTwo.equals("TypeInteger") || ST.getType(childTwo, scope).equals("boolean")))
-				return DataType.TypeBoolean;
-		return DataType.TypeUnknown;
+		return DataType.TypeBoolean;
 	}
 
 	// Not Equals operation
 	// Has two children always.
 	public Object visit(ASTNot_Equals node, Object data) {
-		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
-		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
-		if (!ST.getType(childOne, scope).equals("boolean"))
-			System.out.println("Error: Expected boolean value but got value of (" + childOne + ") in conditional statement");	
-		else if (!ST.getType(childTwo, scope).equals("boolean"))
-			System.out.println("Error: Expected boolean value but got value of (" + childTwo + ") in conditional statement");
-		else
-			return DataType.TypeBoolean;
-		return DataType.TypeUnknown;
+		return DataType.TypeBoolean;
 	}
 
 	// This function checks the eligability of a function structure and invoked function calls.
@@ -449,57 +378,25 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	// Less-Than Node
 	// Has two children always.
 	public Object visit(ASTLess_Than node, Object data) {
-		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
-		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
-		if (!ST.getType(childOne, scope).equals("boolean"))
-			System.out.println("Error: Expected boolean value but got value of (" + childOne + ") in conditional statement");	
-		else if (!ST.getType(childTwo, scope).equals("boolean"))
-			System.out.println("Error: Expected boolean value but got value of (" + childTwo + ") in conditional statement");
-		else
-			return DataType.TypeBoolean;
-		return DataType.TypeUnknown;
+		return DataType.TypeBoolean;
 	}
 
 	// Less-Than-Or-Equal Node
 	// Has two children always.
 	public Object visit(ASTLess_Than_Or_Equal node, Object data) {
-		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
-		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
-		if (!ST.getType(childOne, scope).equals("boolean"))
-			System.out.println("Error: Expected boolean value but got value of (" + childOne + ") in conditional statement");	
-		else if (!ST.getType(childTwo, scope).equals("boolean"))
-			System.out.println("Error: Expected boolean value but got value of (" + childTwo + ") in conditional statement");
-		else
-			return DataType.TypeBoolean;
-		return DataType.TypeUnknown;
+		return DataType.TypeBoolean;
 	}
 
 	// Greater-Than Node
 	// Has two children always.
 	public Object visit(ASTGreater_Than node, Object data) {
-		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
-		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
-		if (!ST.getType(childOne, scope).equals("boolean"))
-			System.out.println("Error: Expected boolean value but got value of (" + childOne + ") in conditional statement");	
-		else if (!ST.getType(childTwo, scope).equals("boolean"))
-			System.out.println("Error: Expected boolean value but got value of (" + childTwo + ") in conditional statement");
-		else
-			return DataType.TypeBoolean;
-		return DataType.TypeUnknown;
+		return DataType.TypeBoolean;
 	}
 
 	// Greater-Than-Or-Equal Node
 	// Has two children always.
 	public Object visit(ASTGreater_Than_Or_Equal node, Object data) {
-		String childOne = node.jjtGetChild(0).jjtAccept(this, data).toString();
-		String childTwo = node.jjtGetChild(1).jjtAccept(this, data).toString();
-		if (!ST.getType(childOne, scope).equals("boolean"))
-			System.out.println("Error: Expected boolean value but got value of (" + childOne + ") in conditional statement");	
-		else if (!ST.getType(childTwo, scope).equals("boolean"))
-			System.out.println("Error: Expected boolean value but got value of (" + childTwo + ") in conditional statement");
-		else
-			return DataType.TypeBoolean;
-		return DataType.TypeUnknown;
+		return DataType.TypeBoolean;
 	}
 
 	// Identifier node - just return back the value.
@@ -551,10 +448,8 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 		return node.value;
 	}
 
-	// Structure I made in the previous assignment for clean code.
-	public Object visit(ASTStatement_Begin_Structure node, Object data) {
-		node.jjtGetChild(0).jjtAccept(this, data);
-		return data;
+	// Assignment - '='
+	public Object visit(ASTAssignment node, Object data) {
+		return node.value;
 	}
-
 }

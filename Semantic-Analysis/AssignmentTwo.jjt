@@ -50,9 +50,31 @@ PARSER_BEGIN(AssignmentTwo)
 				// Perform Type checking & Semantic Analysis on the program.
 				// If an error/warning is found, it will be reported in the terminal.
 				System.out.println();
-				System.out.println("Type Checking:");
+				System.out.println("Type Checking...");
 				TypeCheckVisitor tc = new TypeCheckVisitor();
-				root.jjtAccept(tc, ST);  			
+				root.jjtAccept(tc, ST); 
+
+				/* Perform IR representation conversion
+				 * Goal: Traverse the AST and generate appropriate IR
+				 * code from each node.
+				 * Output will be stored in .ir files
+				 * Output filename will be generated from input .cal file passed
+				 * in via the command line.
+				 * We will be using 3-address code.
+				 */
+				String fileName = args[0].substring(0, args[0].indexOf("."));
+				System.out.println("\n----------------------------------------");
+				System.out.println("Intermediate Representation Generation: ");
+				System.out.println("IR code will be generated into: \'" + fileName + ".ir\'");
+			
+				try {
+					PrintStream outputStream = new PrintStream(new FileOutputStream(fileName));
+					// Reassign standard input stream to the .ir file
+					System.setOut(outputStream);
+				}
+				catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
 
 			} catch (ParseException e) {
 				System.err.println(e);
@@ -268,7 +290,7 @@ void statement_block():
 void statement() #Statement:
 {Token t;}
 {
-	Identifier() (<ASSIGNMENT> expression() <SEMICOLON> | <LBRACE> (arg_list() #Arg_list) <RBRACE> <SEMICOLON>)
+	Identifier() (<ASSIGNMENT> #Assignment expression() <SEMICOLON> | <LBRACE> (arg_list() #Arg_list) <RBRACE> <SEMICOLON>)
 	| statement_begin_structure()
 	|  (t = <IF> condition() statement_begin_structure() {jjtThis.value = t.image;})
 	|  (t = <ELSE> statement_begin_structure() {jjtThis.value = t.image;})
@@ -320,9 +342,9 @@ void simple_expression():
 void condition():
 {Token t;}
 {   
-    (<NOT> simple_condition() | simple_condition())
-	[    t = <AND> condition() {jjtThis.value = t.image;} #LogicalAND
-  	     t = <OR> condition() {jjtThis.value = t.image;} #LogicalOR
+   	(<NOT> simple_condition() | simple_condition())
+	[  t = <AND> condition() {jjtThis.value = t.image;} #LogicalAND(2)
+	|  t = <OR> condition() {jjtThis.value = t.image;} #LogicalOR(2)
 	]
 }
 
@@ -335,14 +357,14 @@ void condition():
 void simple_condition():
 {Token t;}
 {   
-    <LBRACE> condition() <RBRACE>
-    | special_expression() 
-	[	t = <EQUALS>  expression() {jjtThis.value = t.image;} #Equals
-	| 	t = <NOT_EQUALS>  expression() {jjtThis.value = t.image;} #Not_Equals
-	| 	t = <LESS_THAN>  expression() {jjtThis.value = t.image;} #Less_Than
-	| 	t = <LESS_THAN_OR_EQUAL>  expression() {jjtThis.value = t.image;} #Less_Than_Or_Equal
-	| 	t = <GREATER_THAN>  expression() {jjtThis.value = t.image;} #Greater_Than
-	| 	t = <GREATER_THAN_OR_EQUAL> expression() {jjtThis.value = t.image;} #Greater_Than_Or_Equal
+    (<LBRACE> condition() <RBRACE> 
+	| special_expression())
+	[	t = <EQUALS>  expression() {jjtThis.value = t.image;} #Equals(2)
+	| 	t = <NOT_EQUALS>  expression() {jjtThis.value = t.image;} #Not_Equals(2)
+	| 	t = <LESS_THAN>  expression() {jjtThis.value = t.image;} #Less_Than(2)
+	| 	t = <LESS_THAN_OR_EQUAL>  expression() {jjtThis.value = t.image;} #Less_Than_Or_Equal(2)
+	| 	t = <GREATER_THAN>  expression() {jjtThis.value = t.image;} #Greater_Than(2)
+	| 	t = <GREATER_THAN_OR_EQUAL> expression() {jjtThis.value = t.image;} #Greater_Than_Or_Equal(2)
 	] 
 }
 

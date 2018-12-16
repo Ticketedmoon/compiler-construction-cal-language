@@ -1,0 +1,8 @@
+variable i : integer;
+
+main
+	begin
+		if (i | 5)
+		begin
+		end
+	end

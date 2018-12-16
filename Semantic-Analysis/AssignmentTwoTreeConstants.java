@@ -10,22 +10,23 @@ public interface AssignmentTwoTreeConstants
   public int JJTPARAMETER_LIST = 6;
   public int JJTPARAMETER = 7;
   public int JJTSTATEMENT = 8;
-  public int JJTARG_LIST = 9;
-  public int JJTMINUS_SIGN = 10;
-  public int JJTBOOLEAN = 11;
-  public int JJTADD_OP = 12;
-  public int JJTLOGICALAND = 13;
-  public int JJTLOGICALOR = 14;
-  public int JJTEQUALS = 15;
-  public int JJTNOT_EQUALS = 16;
-  public int JJTLESS_THAN = 17;
-  public int JJTLESS_THAN_OR_EQUAL = 18;
-  public int JJTGREATER_THAN = 19;
-  public int JJTGREATER_THAN_OR_EQUAL = 20;
-  public int JJTNUMBER = 21;
-  public int JJTIDENTIFIER = 22;
-  public int JJTTYPE = 23;
-  public int JJTMAIN = 24;
+  public int JJTASSIGNMENT = 9;
+  public int JJTARG_LIST = 10;
+  public int JJTMINUS_SIGN = 11;
+  public int JJTBOOLEAN = 12;
+  public int JJTADD_OP = 13;
+  public int JJTLOGICALAND = 14;
+  public int JJTLOGICALOR = 15;
+  public int JJTEQUALS = 16;
+  public int JJTNOT_EQUALS = 17;
+  public int JJTLESS_THAN = 18;
+  public int JJTLESS_THAN_OR_EQUAL = 19;
+  public int JJTGREATER_THAN = 20;
+  public int JJTGREATER_THAN_OR_EQUAL = 21;
+  public int JJTNUMBER = 22;
+  public int JJTIDENTIFIER = 23;
+  public int JJTTYPE = 24;
+  public int JJTMAIN = 25;
 
 
   public String[] jjtNodeName = {
@@ -38,6 +39,7 @@ public interface AssignmentTwoTreeConstants
     "Parameter_list",
     "Parameter",
     "Statement",
+    "Assignment",
     "Arg_list",
     "Minus_sign",
     "Boolean",
@@ -56,4 +58,4 @@ public interface AssignmentTwoTreeConstants
     "Main",
   };
 }
-/* JavaCC - OriginalChecksum=b8ccfb3e7bf24f1825f5f3264f9a7165 (do not edit this line) */
+/* JavaCC - OriginalChecksum=ab39adcf1c127f0e77aa10b27c5e1950 (do not edit this line) */

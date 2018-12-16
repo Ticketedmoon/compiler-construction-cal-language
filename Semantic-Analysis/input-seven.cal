@@ -11,7 +11,7 @@ variable z: boolean;
 variable p: boolean;
 begin
 	x := (5 + x + 5 - tmp + j) + true;
-	if (y)
+	if (y & z & x = 5 | p = 5 & k = l)
 		begin
 			j := 10;
 			tmp := 1;
@@ -33,4 +33,5 @@ main
 		x := true;
 		x := getMax(q);
 		a := test_fn(b);
+		test_fn(b);
 	end

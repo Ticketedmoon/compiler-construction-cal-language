@@ -87,7 +87,7 @@ class SimpleNode implements Node {
 	// method update for cleaner AST look.
 
     if(value != null) {
-        System.out.print(" [" + value + "]");
+		System.out.print(" [" + value + "]");
     }
     System.out.println();
 
