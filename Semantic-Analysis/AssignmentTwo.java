@@ -45,10 +45,10 @@
 				 * in via the command line.
 				 * We will be using 3-address code.
 				 */
-    String fileName = args[0].substring(0, args[0].indexOf("."));
+    String fileName = args[0].substring(0, args[0].indexOf(".")) + ".ir";
     System.out.println("\n----------------------------------------");
     System.out.println("Intermediate Representation Generation: ");
-    System.out.println("IR code will be generated into: \'" + fileName + ".ir\'");
+    System.out.println("IR code will be generated into: \'" + fileName);
 
     try {
      PrintStream outputStream = new PrintStream(new FileOutputStream(fileName));
@@ -58,6 +58,9 @@
     catch (FileNotFoundException e) {
      e.printStackTrace();
     }
+    // Begin traversal
+    IrCodeGenerator irGen = new IrCodeGenerator();
+    root.jjtAccept(irGen, null);
 
    } catch (ParseException e) {
     System.err.println(e);
