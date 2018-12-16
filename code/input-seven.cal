@@ -14,6 +14,7 @@ begin
 	if (y & true & false) & (y & z) & p
 		begin
 			j := 10;
+			tmp := 1;
 		end
 	return (5);
 end

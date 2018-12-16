@@ -40,6 +40,9 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTStatement node, Object data){
     return defaultVisit(node, data);
   }
+  public Object visit(ASTArg_list node, Object data){
+    return defaultVisit(node, data);
+  }
   public Object visit(ASTMinus_sign node, Object data){
     return defaultVisit(node, data);
   }
@@ -76,18 +79,6 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTGreater_Than_Or_Equal node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTArg_list node, Object data){
-    return defaultVisit(node, data);
-  }
-  public Object visit(ASTNemp_arg_list node, Object data){
-    return defaultVisit(node, data);
-  }
-  public Object visit(ASTFunction_call_structure node, Object data){
-    return defaultVisit(node, data);
-  }
-  public Object visit(ASTStatement_Begin_Structure node, Object data){
-    return defaultVisit(node, data);
-  }
   public Object visit(ASTNumber node, Object data){
     return defaultVisit(node, data);
   }
@@ -101,4 +92,4 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
     return defaultVisit(node, data);
   }
 }
-/* JavaCC - OriginalChecksum=b63ab599d3c775f148b3f9afe8eeec80 (do not edit this line) */
+/* JavaCC - OriginalChecksum=74a48894f0ef912f45aee2f1e62e5ac9 (do not edit this line) */

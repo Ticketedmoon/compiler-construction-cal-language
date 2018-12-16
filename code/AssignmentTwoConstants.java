@@ -9,89 +9,94 @@ public interface AssignmentTwoConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int COMMA = 4;
+  int COMMA = 7;
   /** RegularExpression Id. */
-  int SEMICOLON = 5;
+  int SEMICOLON = 8;
   /** RegularExpression Id. */
-  int COLON = 6;
+  int COLON = 9;
   /** RegularExpression Id. */
-  int ASSIGNMENT = 7;
+  int ASSIGNMENT = 10;
   /** RegularExpression Id. */
-  int LBRACE = 8;
+  int LBRACE = 11;
   /** RegularExpression Id. */
-  int RBRACE = 9;
+  int RBRACE = 12;
   /** RegularExpression Id. */
-  int PLUS = 10;
+  int PLUS = 13;
   /** RegularExpression Id. */
-  int MINUS = 11;
+  int MINUS = 14;
   /** RegularExpression Id. */
-  int NOT = 12;
+  int NOT = 15;
   /** RegularExpression Id. */
-  int OR = 13;
+  int OR = 16;
   /** RegularExpression Id. */
-  int AND = 14;
+  int AND = 17;
   /** RegularExpression Id. */
-  int EQUALS = 15;
+  int EQUALS = 18;
   /** RegularExpression Id. */
-  int NOT_EQUALS = 16;
+  int NOT_EQUALS = 19;
   /** RegularExpression Id. */
-  int LESS_THAN = 17;
+  int LESS_THAN = 20;
   /** RegularExpression Id. */
-  int LESS_THAN_OR_EQUAL = 18;
+  int LESS_THAN_OR_EQUAL = 21;
   /** RegularExpression Id. */
-  int GREATER_THAN = 19;
+  int GREATER_THAN = 22;
   /** RegularExpression Id. */
-  int GREATER_THAN_OR_EQUAL = 20;
+  int GREATER_THAN_OR_EQUAL = 23;
   /** RegularExpression Id. */
-  int VARIABLE = 21;
+  int VARIABLE = 24;
   /** RegularExpression Id. */
-  int CONSTANT = 22;
+  int CONSTANT = 25;
   /** RegularExpression Id. */
-  int RETURN = 23;
+  int RETURN = 26;
   /** RegularExpression Id. */
-  int INTEGER = 24;
+  int INTEGER = 27;
   /** RegularExpression Id. */
-  int BOOLEAN = 25;
+  int BOOLEAN = 28;
   /** RegularExpression Id. */
-  int VOID = 26;
+  int VOID = 29;
   /** RegularExpression Id. */
-  int MAIN = 27;
+  int MAIN = 30;
   /** RegularExpression Id. */
-  int IF = 28;
+  int IF = 31;
   /** RegularExpression Id. */
-  int ELSE = 29;
+  int ELSE = 32;
   /** RegularExpression Id. */
-  int TRUE = 30;
+  int TRUE = 33;
   /** RegularExpression Id. */
-  int FALSE = 31;
+  int FALSE = 34;
   /** RegularExpression Id. */
-  int WHILE = 32;
+  int WHILE = 35;
   /** RegularExpression Id. */
-  int BEGIN = 33;
+  int BEGIN = 36;
   /** RegularExpression Id. */
-  int END = 34;
+  int END = 37;
   /** RegularExpression Id. */
-  int IS = 35;
+  int IS = 38;
   /** RegularExpression Id. */
-  int SKIP_TOKEN = 36;
+  int SKIP_TOKEN = 39;
   /** RegularExpression Id. */
-  int DIGIT = 37;
+  int DIGIT = 40;
   /** RegularExpression Id. */
-  int ID = 38;
+  int ID = 41;
   /** RegularExpression Id. */
-  int LETTER = 39;
+  int LETTER = 42;
   /** RegularExpression Id. */
-  int UNDERSCORE = 40;
+  int UNDERSCORE = 43;
 
   /** Lexical state. */
   int DEFAULT = 0;
+  /** Lexical state. */
+  int IN_COMMENT = 1;
 
   /** Literal token values. */
   String[] tokenImage = {
     "<EOF>",
     "<token of kind 1>",
     "<token of kind 2>",
-    "<token of kind 3>",
+    "\"/*\"",
+    "\"/*\"",
+    "\"*/\"",
+    "<token of kind 6>",
     "\",\"",
     "\";\"",
     "\":\"",

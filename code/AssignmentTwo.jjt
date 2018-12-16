@@ -37,14 +37,18 @@ PARSER_BEGIN(AssignmentTwo)
 				// parser initialisation
 				AssignmentTwo parser = new AssignmentTwo(new FileInputStream(args[0]));
 
+				// Build our Abstract Syntax tree (AST)
 				SimpleNode root = parser.program();
 				System.out.println("Abstract Syntax Tree:");
 				root.dump(" ");
 
+				// Output the symbol table of the program based off the input
 				System.out.println();
 				System.out.println("Symbol Table:\n"); 
 				ST.print();
 
+				// Perform Type checking & Semantic Analysis on the program.
+				// If an error/warning is found, it will be reported in the terminal.
 				System.out.println();
 				System.out.println("Type Checking:");
 				TypeCheckVisitor tc = new TypeCheckVisitor();
@@ -58,12 +62,31 @@ PARSER_BEGIN(AssignmentTwo)
 
 PARSER_END(AssignmentTwo)
 
+TOKEN_MGR_DECLS :
+{
+	static int commentNesting = 0;
+}
+
 // Tokens for the parser to skip
 SKIP: 
 {
 	< " " | "\t" | "\n" | "\r" | "\r\n" >
 	| < "//" (~["\n","\r"])* ("\n"|"\r"|"\r\n") >
-	| < "/*" (~[])* "*""/" >
+}
+
+SKIP : /* COMMENTS */
+{
+	"/*" { commentNesting++; } : IN_COMMENT
+}
+
+<IN_COMMENT> SKIP :
+{
+	"/*" { commentNesting++; }
+  | "*/" { commentNesting--;
+	if (commentNesting == 0)
+		SwitchTo(DEFAULT);
+	}
+  | <~[]>
 }
 
 // Static Tokens
@@ -112,7 +135,7 @@ TOKEN:
 // Identifier Tokens                                                               
 TOKEN:                                                                             
 {                                                                                  
-    <DIGIT: "0" | ((<MINUS>)? ["1" - "9"] (["0" - "9"])*) >
+    <DIGIT: (<MINUS>)? "0" | ((<MINUS>)? ["1" - "9"] (["0" - "9"])*) >
     | <ID: <LETTER>(<LETTER>|<DIGIT>|<UNDERSCORE>)* >                              
     | <# LETTER: (["a"-"z", "A"-"Z"])+ >
     | <# UNDERSCORE: "_" >                                                         
@@ -245,7 +268,7 @@ void statement_block():
 void statement() #Statement:
 {Token t;}
 {
-	Identifier() (assignment_structure() | <LBRACE> function_call_structure())
+	Identifier() (<ASSIGNMENT> expression() <SEMICOLON> | <LBRACE> (arg_list() #Arg_list) <RBRACE> <SEMICOLON>)
 	| statement_begin_structure()
 	|  (t = <IF> condition() statement_begin_structure() {jjtThis.value = t.image;})
 	|  (t = <ELSE> statement_begin_structure() {jjtThis.value = t.image;})
@@ -287,7 +310,7 @@ void simple_expression():
 {}
 {
     <LBRACE> expression() <RBRACE>
-    | Identifier() [<LBRACE> arg_list() <RBRACE>]
+    | Identifier() [<LBRACE> (arg_list() #Arg_list) <RBRACE>]
     | fragment()
 }
 
@@ -338,16 +361,16 @@ void special_expression():
 void simple_special_expression() #Exp:
 {}
 {
-    Identifier() [<LBRACE> arg_list() <RBRACE>]
+    Identifier() [<LBRACE> (arg_list() #Arg_list) <RBRACE>]
     | fragment()
 }
 
 // Argument list is 0 or 1 non-empty argument lists.
 // Non-empty argument list, is a list of IDs with COMMAs separating them.
-void arg_list() #Arg_list:
+void arg_list():
 {}
 {
-    [nemp_arg_list() #Nemp_arg_list]
+    [nemp_arg_list()]
 }
 
 void nemp_arg_list():
@@ -356,22 +379,8 @@ void nemp_arg_list():
     Identifier() [<COMMA> arg_list()]
 }
 
-// Structure to assignments 
-void assignment_structure():
-{}
-{
-  <ASSIGNMENT> expression() <SEMICOLON>
-}
-
-// Structure to function calls
-void function_call_structure() #Function_call_structure:
-{}
-{
-	arg_list() <RBRACE> <SEMICOLON>
-}
-
 // Structure to statements
-void statement_begin_structure() #Statement_Begin_Structure:
+void statement_begin_structure():
 {}
 {
 	<BEGIN>
@@ -391,7 +400,7 @@ String Identifier() #Identifier:
   t = <ID> {jjtThis.value = t.image; return t.image;}
 }
 
-// Defines the type for AST matching.
+// Defines the type for AST matching cases.
 String Type() #Type:
 {Token t;}
 {

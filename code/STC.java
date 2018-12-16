@@ -103,15 +103,17 @@ public class STC extends Object
 
 	public int getParams(String id) {
         LinkedList<String> list = symbolTable.get(id);
-        int count = 0;
-        for(int i = 0; i < list.size(); i++) {
-            String description = descriptionTable.get(list.get(i) + "/" + id);
-            if(description.equals("parameter")) {
-                count++;
-            }
-        }
-        return count;
-    }
+        int counter = 0;
+		if (list != null) {
+        	for(int i = 0; i < list.size(); i++) {
+            	String description = descriptionTable.get(list.get(i) + "/" + id);
+            	if(description.equals("parameter")) {
+                	counter++;
+            	}
+        	}
+    	}
+        return counter;
+	}
 
 	public String getParamType(int index, String scope) {
         int count = 0;
