@@ -60,7 +60,7 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 	/* Method checks for any any function calls in program and prints them. */
 	private static void scanForFunctionErrors() {
 		// Print out all invoked functions for clarity
-		System.out.println("\nInvoked Functions:");
+		System.out.println("\nInvoked Functions: ");
 		for (String s : functionCalls) 
 			System.out.println("Function with ID (" + s + ") was invoked.");
 
@@ -207,7 +207,7 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
         	}
 
 			if (id.equals("TypeBoolean")) {
-				return node.jjtGetChild(1).jjtAccept(this, data);
+				return data;
 			}
 	
 			// Check integer/boolean/function calls

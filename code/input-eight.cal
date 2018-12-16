@@ -1,0 +1,18 @@
+variable p : integer;
+variable x : integer;
+constant k : integer := 5;
+constant bool : boolean := true;
+
+boolean test(x: integer) is
+begin
+	return (bool);
+end
+
+main
+	begin
+		p := x + 5 - k;
+		if (p & k & x & 5)
+		begin
+			// bool := test(k);
+		end
+	end
