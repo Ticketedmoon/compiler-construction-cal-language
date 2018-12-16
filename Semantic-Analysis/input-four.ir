@@ -1,7 +1,10 @@
 variable	i
 TEST_FN:
 	begin
-		return (1 + 2 - 3 + 4)
+		t1 = 1 + 2
+		t2 = t1 - 3
+		t3 = t2 + 4
+		return t3
 		pop 4
 	end
 MAIN:

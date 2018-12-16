@@ -54,24 +54,38 @@ public class IrCodeGenerator implements AssignmentTwoVisitor {
 	public Object visit(ASTFunction node, Object data) {
 		String functionName = node.jjtGetChild(1).jjtAccept(this, data).toString();
 		String returnValue = "\t\treturn ";
+		String [] returnTemp = new String [0];
+
 		// How many parameters are there?
 		int paramCount = node.jjtGetChild(2).jjtGetNumChildren();
 		// Function stack space (4 bytes per item / 32 bits)
 		int functionSpaceBytes = paramCount * 4;
 
+		// Extracts actual return value
 		System.out.println(functionName.toUpperCase() + ":");
 		System.out.println("\tbegin");
 		for(int i = 0; i < node.jjtGetNumChildren(); i++) {
 			if(node.jjtGetChild(i).toString().equals("FuncReturn"))
-				returnValue += "(" + node.jjtGetChild(i).jjtAccept(this, data) + ")";
+				returnTemp = node.jjtGetChild(i).jjtAccept(this, data).toString().split(" ");
 			else
 				node.jjtGetChild(i).jjtAccept(this, data);
 		}
 	
+		// Generate appropriate 3-address code for real value.
+		// Temporary registers here for binary operators.
+		int count = 1;
+		String tCount = "";
+		for (int i = 0; i < returnTemp.length-2; i+=2) {
+			tCount = "t" + count;
+			System.out.println("\t\t" + tCount + " = " + returnTemp[i] + " " + returnTemp[i+1] + " " + returnTemp[i+2]);
+			returnTemp[i+2] = tCount;
+			count++;
+		}
+		
 		// Print out the return value as 3-address code
 		// All previous declarations/statements in function 
 		// should already be acknowledged.
-		System.out.println(returnValue);
+		System.out.println(returnValue + tCount);
 		System.out.println("\t\tpop " + functionSpaceBytes);
 		System.out.println("\tend");
 		
