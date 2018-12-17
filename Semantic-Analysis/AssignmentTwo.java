@@ -678,12 +678,12 @@ ASTAdd_Op jjtn001 = new ASTAdd_Op(JJTADD_OP);
                               boolean jjtc001 = true;
                               jjtree.openNodeScope(jjtn001);
         try {
-jjtree.closeNodeScope(jjtn001, true);
+jjtree.closeNodeScope(jjtn001,  2);
                               jjtc001 = false;
 jjtn001.value = t.image;
         } finally {
 if (jjtc001) {
-                                jjtree.closeNodeScope(jjtn001, true);
+                                jjtree.closeNodeScope(jjtn001,  2);
                               }
         }
         break;
@@ -695,12 +695,12 @@ ASTAdd_Op jjtn002 = new ASTAdd_Op(JJTADD_OP);
                                 boolean jjtc002 = true;
                                 jjtree.openNodeScope(jjtn002);
         try {
-jjtree.closeNodeScope(jjtn002, true);
+jjtree.closeNodeScope(jjtn002,  2);
                                 jjtc002 = false;
 jjtn002.value = t.image;
         } finally {
 if (jjtc002) {
-                                  jjtree.closeNodeScope(jjtn002, true);
+                                  jjtree.closeNodeScope(jjtn002,  2);
                                 }
         }
         break;

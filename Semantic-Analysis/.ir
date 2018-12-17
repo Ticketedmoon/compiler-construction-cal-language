@@ -1,0 +1,5 @@
+HELLO:
+	begin
+	if	(j = i + 3 | j = true & x = 5 | x = 2) goto L1
+	L1:
+		i = i - 5

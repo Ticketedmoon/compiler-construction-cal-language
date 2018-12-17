@@ -168,8 +168,10 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 
 	// Constants can have a type, value and identifier.
 	public Object visit(ASTConstDecl node, Object data) {
-		String type = (String) node.jjtGetChild(1).jjtAccept(this, data).toString();
+		String ID = node.jjtGetChild(0).jjtAccept(this, data).toString();
+		String type = node.jjtGetChild(1).jjtAccept(this, data).toString();
 		String const_val = node.jjtGetChild(2).jjtAccept(this, data).toString();
+		checkForMatchingDeclarations(ID, scope);
 
 		// Check numeric edge cases
 		if (type.equals("integer") && const_val.equals("TypeInteger")) {
@@ -214,7 +216,8 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
                 	System.out.println("Error: ID (" + id + ") is a constant and cannot be redeclared");
             	}
             	else {
-            		String rval = node.jjtGetChild(1).jjtAccept(this, data).toString();					 String rvalNodeType = node.jjtGetChild(1).toString();
+            		String rval = node.jjtGetChild(1).jjtAccept(this, data).toString();					 
+					String rvalNodeType = node.jjtGetChild(1).toString();
             		if(type.equals("integer")) {
 						if (rval.equals("TypeInteger") || isDeclared(rval, scope) && ST.getType(rval, scope).equals("integer") && !ST.isFunction(rval)) {
                     		node.jjtGetChild(2).jjtAccept(this, data);
@@ -437,6 +440,9 @@ public class TypeCheckVisitor implements AssignmentTwoVisitor
 		if (node.jjtGetNumChildren() > 0) {
 			String returnVal = node.jjtGetChild(0).jjtAccept(this, data).toString();
 			if (!returnVal.equals("TypeInteger") && !ST.getType(returnVal, scope).equals(functionType)) {
+				System.out.println("Error: Return value type mismatch with function declaration type");
+			}
+			else if (!returnVal.equals("TypeBoolean") && !ST.getType(returnVal, scope).equals(functionType)) {
 				System.out.println("Error: Return value type mismatch with function declaration type");
 			}
 			else {

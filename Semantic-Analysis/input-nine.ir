@@ -1,5 +1,0 @@
-variable	i
-MAIN:
-	begin 
-	if	(i  | j) goto L1
-	L1:

@@ -674,7 +674,7 @@ void expression():
 {
     simple_expression() 
 	[
-		t = <PLUS> expression()/*@bgen(jjtree) #Add_Op( 2) */
+		t = <PLUS> expression()/*@bgen(jjtree) Add_Op */
                             {
                               ASTAdd_Op jjtn001 = new ASTAdd_Op(JJTADD_OP);
                               boolean jjtc001 = true;
@@ -683,17 +683,17 @@ void expression():
                             try {
 /*@egen*//*@bgen(jjtree)*/
                             {
-                              jjtree.closeNodeScope(jjtn001,  2);
+                              jjtree.closeNodeScope(jjtn001, true);
                               jjtc001 = false;
                             }
 /*@egen*/   {jjtn001.value = t.image;}/*@bgen(jjtree)*/
                             } finally {
                               if (jjtc001) {
-                                jjtree.closeNodeScope(jjtn001,  2);
+                                jjtree.closeNodeScope(jjtn001, true);
                               }
                             }
-/*@egen*/           
-	| 	t = <MINUS> expression()/*@bgen(jjtree) #Add_Op( 2) */
+/*@egen*/        
+	| 	t = <MINUS> expression()/*@bgen(jjtree) Add_Op */
                               {
                                 ASTAdd_Op jjtn002 = new ASTAdd_Op(JJTADD_OP);
                                 boolean jjtc002 = true;
@@ -702,16 +702,16 @@ void expression():
                               try {
 /*@egen*//*@bgen(jjtree)*/
                               {
-                                jjtree.closeNodeScope(jjtn002,  2);
+                                jjtree.closeNodeScope(jjtn002, true);
                                 jjtc002 = false;
                               }
 /*@egen*/  {jjtn002.value = t.image;}/*@bgen(jjtree)*/
                               } finally {
                                 if (jjtc002) {
-                                  jjtree.closeNodeScope(jjtn002,  2);
+                                  jjtree.closeNodeScope(jjtn002, true);
                                 }
                               }
-/*@egen*/           
+/*@egen*/        
 	]
 }
 
