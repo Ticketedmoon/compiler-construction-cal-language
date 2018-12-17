@@ -1,0 +1,14 @@
+variable	i
+CONST	b = true
+variable	p
+FUNC:
+	begin
+		p = 5
+		return 
+		pop 8
+	end
+MAIN:
+	begin 
+		param	i
+		i = call func, 1
+	end

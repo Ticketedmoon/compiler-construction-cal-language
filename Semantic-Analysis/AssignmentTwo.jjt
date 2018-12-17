@@ -73,14 +73,19 @@ PARSER_BEGIN(AssignmentTwo)
 					System.setOut(outputStream);
 				}
 				catch (FileNotFoundException e) {
-					e.printStackTrace();
+					System.out.println("File Not Found for parsing");
 				}
+
 				// Begin traversal
-				IrCodeGenerator irGen = new IrCodeGenerator();
-				root.jjtAccept(irGen, null);
+				try {
+					IrCodeGenerator irGen = new IrCodeGenerator();
+					root.jjtAccept(irGen, null);
+				} catch (Exception e) {
+					System.err.println("IR code generation finished");
+				}
 
 			} catch (ParseException e) {
-				System.err.println(e);
+				e.printStackTrace();
 			}
 		}
 	}
@@ -255,7 +260,7 @@ void function():
 	[DeclarationList()]
 	<BEGIN>
 		statement_block()
-	    function_return() #FuncReturn
+	    function_return() #ReturnValue
 	<END>)
 	{scope = "global";}
 }
@@ -293,8 +298,8 @@ void statement_block():
 void statement() #Statement:
 {Token t;}
 {
-	Identifier() (<ASSIGNMENT> #Assignment expression() <SEMICOLON> | <LBRACE> (arg_list() #Arg_list) <RBRACE> <SEMICOLON>)
-	| statement_begin_structure()
+	Identifier() (<ASSIGNMENT> expression() <SEMICOLON> #Assignment | <LBRACE> arg_list() <RBRACE> <SEMICOLON>)
+	| statement_begin_structure() 
 	|  (t = <IF> condition() statement_begin_structure() {jjtThis.value = t.image;})
 	|  (t = <ELSE> statement_begin_structure() {jjtThis.value = t.image;})
 	|  (t = <WHILE> condition() statement_begin_structure() {jjtThis.value = t.image;})
@@ -321,8 +326,8 @@ void expression():
 {
     simple_expression() 
 	[
-		t = <PLUS> expression()   {jjtThis.value = t.image;} #Add_Op(2)
-	| 	t = <MINUS> expression()  {jjtThis.value = t.image;} #Add_Op(2)
+		t = <PLUS> expression()   {jjtThis.value = t.image;} #Add_Op
+	| 	t = <MINUS> expression()  {jjtThis.value = t.image;} #Add_Op
 	]
 }
 
@@ -332,10 +337,10 @@ void expression():
  * 3) An ID followed by 0 or 1 Left parenthese + argument list + right parenthese.
  */
 void simple_expression():
-{}
+{Token t;}
 {
     <LBRACE> expression() <RBRACE>
-    | Identifier() [<LBRACE> (arg_list() #Arg_list) <RBRACE>]
+    | (t = <ID> [<LBRACE> arg_list() <RBRACE>]  {jjtThis.value = t.image;}) #FunctionCall
     | fragment()
 }
 
@@ -346,8 +351,8 @@ void condition():
 {Token t;}
 {   
    	(<NOT> simple_condition() | simple_condition())
-	[  t = <AND> condition() {jjtThis.value = t.image;} #LogicalAND(2)
-	|  t = <OR> condition() {jjtThis.value = t.image;} #LogicalOR(2)
+	[  t = <AND> condition() {jjtThis.value = t.image;} #LogicalAND
+	|  t = <OR> condition() {jjtThis.value = t.image;} #LogicalOR
 	]
 }
 
@@ -358,17 +363,21 @@ void condition():
  * when deciding what choice to make in our parser.
 */
 void simple_condition():
-{Token t;}
+{}
 {   
-    (<LBRACE> condition() <RBRACE> 
-	| special_expression())
-	[	t = <EQUALS>  expression() {jjtThis.value = t.image;} #Equals(2)
-	| 	t = <NOT_EQUALS>  expression() {jjtThis.value = t.image;} #Not_Equals(2)
-	| 	t = <LESS_THAN>  expression() {jjtThis.value = t.image;} #Less_Than(2)
-	| 	t = <LESS_THAN_OR_EQUAL>  expression() {jjtThis.value = t.image;} #Less_Than_Or_Equal(2)
-	| 	t = <GREATER_THAN>  expression() {jjtThis.value = t.image;} #Greater_Than(2)
-	| 	t = <GREATER_THAN_OR_EQUAL> expression() {jjtThis.value = t.image;} #Greater_Than_Or_Equal(2)
-	] 
+    (<LBRACE> condition() <RBRACE> | special_expression())
+	[compare()]
+}
+
+void compare() #Compare:
+{Token t;}
+{
+	t = <EQUALS>  expression() {jjtThis.value = t.image;} #Equals
+	| 	t = <NOT_EQUALS>  expression() {jjtThis.value = t.image;} #Not_Equals
+	| 	t = <LESS_THAN>  expression() {jjtThis.value = t.image;} #Less_Than
+	| 	t = <LESS_THAN_OR_EQUAL>  expression() {jjtThis.value = t.image;} #Less_Than_Or_Equal
+	| 	t = <GREATER_THAN>  expression() {jjtThis.value = t.image;} #Greater_Than
+	| 	t = <GREATER_THAN_OR_EQUAL> expression() {jjtThis.value = t.image;} #Greater_Than_Or_Equal
 }
 
 // Special Expression structure - similar to expression / condition.
@@ -384,9 +393,9 @@ void special_expression():
 
 // Similar to simple_expression, but without the <LBRACE> choice conflict.
 void simple_special_expression():
-{}
+{Token t;}
 {
-    Identifier() [<LBRACE> (arg_list() #Arg_list) <RBRACE>]
+    t = <ID> [<LBRACE> arg_list() <RBRACE>] {jjtThis.value = t.image;} #FunctionCall
     | fragment()
 }
 
@@ -395,13 +404,13 @@ void simple_special_expression():
 void arg_list():
 {}
 {
-    [nemp_arg_list()]
+    [nemp_arg_list() #Arg_list]
 }
 
 void nemp_arg_list():
 {}
 {
-    Identifier() [<COMMA> arg_list()]
+    Identifier() [<COMMA> nemp_arg_list()]
 }
 
 // Structure to statements

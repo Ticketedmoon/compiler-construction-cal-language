@@ -1,0 +1,13 @@
+variable	x
+variable	i
+variable	j
+variable	y
+variable	y
+CONST	val = hello
+CONST	tmp = 5
+GETMAX:
+	begin
+		x = 5
+	if	(y = 5 & z = 5 & x = l | p  & k) goto L1
+	L1:
+		j = 10

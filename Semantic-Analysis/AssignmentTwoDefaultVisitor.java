@@ -19,7 +19,7 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTFunction node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTFuncReturn node, Object data){
+  public Object visit(ASTReturnValue node, Object data){
     return defaultVisit(node, data);
   }
   public Object visit(ASTParameter_list node, Object data){
@@ -34,9 +34,6 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTAssignment node, Object data){
     return defaultVisit(node, data);
   }
-  public Object visit(ASTArg_list node, Object data){
-    return defaultVisit(node, data);
-  }
   public Object visit(ASTMinus_sign node, Object data){
     return defaultVisit(node, data);
   }
@@ -46,10 +43,16 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTAdd_Op node, Object data){
     return defaultVisit(node, data);
   }
+  public Object visit(ASTFunctionCall node, Object data){
+    return defaultVisit(node, data);
+  }
   public Object visit(ASTLogicalAND node, Object data){
     return defaultVisit(node, data);
   }
   public Object visit(ASTLogicalOR node, Object data){
+    return defaultVisit(node, data);
+  }
+  public Object visit(ASTCompare node, Object data){
     return defaultVisit(node, data);
   }
   public Object visit(ASTEquals node, Object data){
@@ -70,6 +73,9 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
   public Object visit(ASTGreater_Than_Or_Equal node, Object data){
     return defaultVisit(node, data);
   }
+  public Object visit(ASTArg_list node, Object data){
+    return defaultVisit(node, data);
+  }
   public Object visit(ASTNumber node, Object data){
     return defaultVisit(node, data);
   }
@@ -83,4 +89,4 @@ public class AssignmentTwoDefaultVisitor implements AssignmentTwoVisitor{
     return defaultVisit(node, data);
   }
 }
-/* JavaCC - OriginalChecksum=35564e2d5d83df63a75270be0b2a6557 (do not edit this line) */
+/* JavaCC - OriginalChecksum=be7c2433862315f29823ec5483f220d0 (do not edit this line) */

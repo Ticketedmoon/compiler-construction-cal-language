@@ -1,8 +1,8 @@
 // Name:STC.java
-// Author: David Sinclair      Date: 29 Aug 2012
-//
-// Very basic Symbol Table implementation
-//
+// Author: Shane Creedon
+// I began with a basic symbol table implementation
+// and improved it from the ground up.
+// I used the hashtable/LL approach.
 
 import java.util.*;
 
@@ -15,12 +15,12 @@ public class STC extends Object
     Hashtable<String, String> typeTable;
 
 	// Handles functions & parameters
-    Hashtable<String, String> descriptionTable;
+    Hashtable<String, String> infoTable;
 
     public STC() {
 		this.symbolTable = new Hashtable<>();
 		this.typeTable = new Hashtable<>();
-		this.descriptionTable = new Hashtable<>();
+		this.infoTable = new Hashtable<>();
 
 		symbolTable.put("global", new LinkedList<>());
     }
@@ -58,7 +58,7 @@ public class STC extends Object
 			list.addFirst(id);
 		}
 		typeTable.put(id + "/" + scope, type);
-		descriptionTable.put(id + "/" + scope, info);
+		infoTable.put(id + "/" + scope, info);
 	}
 
 	public void print() {
@@ -71,8 +71,8 @@ public class STC extends Object
             LinkedList<String> idList = symbolTable.get(scope);
             for(String id : idList) {
                 String type = typeTable.get(id + "/" + scope);
-                String description = descriptionTable.get(id + "/" + scope);
-                System.out.println(" - (" + id + ", " + type + ", " + description + ")");
+                String info = infoTable.get(id + "/" + scope);
+                System.out.println(" - (" + id + ", " + type + ", " + info + ")");
             }
             System.out.println();
         }
@@ -82,8 +82,8 @@ public class STC extends Object
         LinkedList<String> list = symbolTable.get("global");
         ArrayList<String> functions = new ArrayList<String>();
         for(int i = 0; i < list.size(); i++) {
-                String description = descriptionTable.get(list.get(i) + "/" + "global");
-                if(description.equals("function")  && list.get(i).equals(id)) {
+                String details = infoTable.get(list.get(i) + "/" + "global");
+                if(details.equals("function")  && list.get(i).equals(id)) {
                     return true;
                 }
         }
@@ -94,8 +94,8 @@ public class STC extends Object
         LinkedList<String> list = symbolTable.get("global");
         ArrayList<String> functions = new ArrayList<String>();
         for(int i = 0; i < list.size(); i++) {
-                String description = descriptionTable.get(list.get(i)+ "/" + "global");
-                if(description.equals("function"))
+                String details = infoTable.get(list.get(i)+ "/" + "global");
+                if(details.equals("function"))
                     functions.add(list.get(i));
         }
         return functions;
@@ -106,8 +106,8 @@ public class STC extends Object
         int counter = 0;
 		if (list != null) {
         	for(int i = 0; i < list.size(); i++) {
-            	String description = descriptionTable.get(list.get(i) + "/" + id);
-            	if(description.equals("parameter")) {
+            	String details = infoTable.get(list.get(i) + "/" + id);
+            	if(details.equals("parameter")) {
                 	counter++;
             	}
         	}
@@ -120,8 +120,8 @@ public class STC extends Object
         LinkedList<String> identifiers = symbolTable.get(scope);
             for(String id : identifiers) {
                 String type = typeTable.get(id + "/" + scope);
-                String description = descriptionTable.get(id + "/" + scope);
-                if(description.equals("parameter")) {
+                String details = infoTable.get(id + "/" + scope);
+                if(details.equals("parameter")) {
                     count++;
                     if(count == index) {
                         return type;
@@ -134,12 +134,12 @@ public class STC extends Object
 	// Check if ID is in current scope first
 	// Then check if in global scope.
     public String getDescription(String id, String scope) {
-        String description = descriptionTable.get(id + "/" + scope);
-        if(description != null) 
-            return description;
+        String details = infoTable.get(id + "/" + scope);
+
+        if(details != null) 
+            return details;
         else 
-			return descriptionTable.get(id + "/" + "global");
-		
+			return infoTable.get(id + "/" + "global");	
     }
 
 	// Check for identical declarations in global / current scope.

@@ -5,7 +5,7 @@ constant bool : boolean := true;
 
 boolean test(x: integer) is
 begin
-	return (bool);
+	return (x);
 end
 
 main

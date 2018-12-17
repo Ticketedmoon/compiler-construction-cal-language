@@ -1,0 +1,5 @@
+MULTIPLY:
+	begin
+	if	(y < 0 & y >= 0) goto L1
+	L1:
+		minus_sign = true

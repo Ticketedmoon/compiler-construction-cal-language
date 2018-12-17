@@ -1,0 +1,11 @@
+MULTIPLY:
+	begin
+	if	(x < 0 & y > 0 | x < x) goto L1
+	L1:
+		minus_sign = true
+	L2:
+		result = 5
+	end
+MAIN:
+	begin
+	end

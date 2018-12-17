@@ -1,0 +1,13 @@
+variable	p
+variable	x
+CONST	k = 5
+CONST	bool = true
+TEST:
+	begin
+		return 
+		pop 8
+	end
+MAIN:
+	begin 
+	if	(p  & k  & x  &) goto L1
+	L1:

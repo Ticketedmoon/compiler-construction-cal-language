@@ -1,0 +1,20 @@
+variable	p
+CONST	y = 5
+variable	isOn
+variable	isOff
+variable	switch
+HELLO:
+	begin
+		i = 1
+		x = 5
+		return 
+		pop 8
+	end
+GETISOFF:
+	begin
+		return 
+		pop 0
+	end
+MAIN:
+	begin 
+	end

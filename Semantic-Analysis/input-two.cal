@@ -5,5 +5,5 @@ end
 
 main 
 begin
-	func();
+	func(a, b);
 end

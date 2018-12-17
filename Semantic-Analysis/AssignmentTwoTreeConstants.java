@@ -6,27 +6,29 @@ public interface AssignmentTwoTreeConstants
   public int JJTVARDECL = 2;
   public int JJTCONSTDECL = 3;
   public int JJTFUNCTION = 4;
-  public int JJTFUNCRETURN = 5;
+  public int JJTRETURNVALUE = 5;
   public int JJTPARAMETER_LIST = 6;
   public int JJTPARAMETER = 7;
   public int JJTSTATEMENT = 8;
   public int JJTASSIGNMENT = 9;
-  public int JJTARG_LIST = 10;
-  public int JJTMINUS_SIGN = 11;
-  public int JJTBOOLEAN = 12;
-  public int JJTADD_OP = 13;
+  public int JJTMINUS_SIGN = 10;
+  public int JJTBOOLEAN = 11;
+  public int JJTADD_OP = 12;
+  public int JJTFUNCTIONCALL = 13;
   public int JJTLOGICALAND = 14;
   public int JJTLOGICALOR = 15;
-  public int JJTEQUALS = 16;
-  public int JJTNOT_EQUALS = 17;
-  public int JJTLESS_THAN = 18;
-  public int JJTLESS_THAN_OR_EQUAL = 19;
-  public int JJTGREATER_THAN = 20;
-  public int JJTGREATER_THAN_OR_EQUAL = 21;
-  public int JJTNUMBER = 22;
-  public int JJTIDENTIFIER = 23;
-  public int JJTTYPE = 24;
-  public int JJTMAIN = 25;
+  public int JJTCOMPARE = 16;
+  public int JJTEQUALS = 17;
+  public int JJTNOT_EQUALS = 18;
+  public int JJTLESS_THAN = 19;
+  public int JJTLESS_THAN_OR_EQUAL = 20;
+  public int JJTGREATER_THAN = 21;
+  public int JJTGREATER_THAN_OR_EQUAL = 22;
+  public int JJTARG_LIST = 23;
+  public int JJTNUMBER = 24;
+  public int JJTIDENTIFIER = 25;
+  public int JJTTYPE = 26;
+  public int JJTMAIN = 27;
 
 
   public String[] jjtNodeName = {
@@ -35,27 +37,29 @@ public interface AssignmentTwoTreeConstants
     "VarDecl",
     "ConstDecl",
     "Function",
-    "FuncReturn",
+    "ReturnValue",
     "Parameter_list",
     "Parameter",
     "Statement",
     "Assignment",
-    "Arg_list",
     "Minus_sign",
     "Boolean",
     "Add_Op",
+    "FunctionCall",
     "LogicalAND",
     "LogicalOR",
+    "Compare",
     "Equals",
     "Not_Equals",
     "Less_Than",
     "Less_Than_Or_Equal",
     "Greater_Than",
     "Greater_Than_Or_Equal",
+    "Arg_list",
     "Number",
     "Identifier",
     "Type",
     "Main",
   };
 }
-/* JavaCC - OriginalChecksum=ab39adcf1c127f0e77aa10b27c5e1950 (do not edit this line) */
+/* JavaCC - OriginalChecksum=e58759cd3ab869a410b5cfc12eedb316 (do not edit this line) */

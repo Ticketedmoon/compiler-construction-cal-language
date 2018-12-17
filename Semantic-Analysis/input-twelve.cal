@@ -1,0 +1,18 @@
+variable i : boolean;
+constant b : boolean := true;
+variable p :integer;
+// constant i : integer := hello;
+// variable i : integer;
+
+integer func(x: boolean) is
+variable i : integer;
+begin
+	p := 5 + 3 + 5 + p + b;
+	return(i);
+end
+
+main
+	begin
+		i := func(i);
+		i := best();
+	end

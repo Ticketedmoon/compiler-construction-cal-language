@@ -1,0 +1,9 @@
+FUNC:
+	begin
+		return 
+		pop 0
+	end
+MAIN:
+	begin 
+		goto	func
+	end

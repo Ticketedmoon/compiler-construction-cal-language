@@ -1,7 +1,7 @@
 variable	i
 TEST_FN:
 	begin
-		i = -0
+		i = 2
 		return 
 		pop 8
 	end
@@ -9,8 +9,5 @@ MAIN:
 	begin 
 		i = 1
 		param	i
-		param	a
-		param	c
-		param	D
-		i = call test_fn, 4
+		i = call test_fn, 1
 	end
